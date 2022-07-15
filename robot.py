@@ -34,6 +34,7 @@ class MyRobot(magicbot.MagicRobot):
             self.smart_dashboard.putString("Drivetrain:", "+")
 
         except:
+            self.onException()
             self.smart_dashboard.putString("Drivetrain:", "-")
 
 if __name__ == '__main__':
