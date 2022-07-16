@@ -1,10 +1,19 @@
 import magicbot
 import wpilib
 from subsystems.drivetrain import DriveTrain
+from subsystems.intake import Intake
+from subsystems.shooter import Shooter
+import ctre
 
 class MyRobot(magicbot.MagicRobot):
 
+    ballCount = 1 #Robotu icinde 1 top ile baslat
+    intakeRunning = False
+    shooterRunning = False
+
     drivetrain: DriveTrain
+    intake: Intake
+    shooter: Shooter
 
     def createObjects(self):
         '''Create motors and stuff here'''
@@ -18,6 +27,17 @@ class MyRobot(magicbot.MagicRobot):
         self.gamepad = wpilib.Joystick(0)
         self.flightStick = wpilib.Joystick(1)
 
+        self.belt_lower = ctre.VictorSPX()
+        self.belt_upper = ctre.VictorSPX()
+
+        self.shooter_front1 = ctre.VictorSPX()
+        self.shooter_front2 = ctre.VictorSPX()
+        self.shooter_rear = ctre.VictorSPX()
+
+        self.intake_timer = wpilib.Timer()
+        self.shooter_timer = wpilib.Timer()
+        self.cooldown_timer = wpilib.Timer() # intake ve shooter komutlarina cooldown ekleyecegiz, karisiklik riski az olacak.
+
     def teleopInit(self):
         '''Called when teleop starts; optional'''
 
@@ -29,6 +49,9 @@ class MyRobot(magicbot.MagicRobot):
         self.throttle_x_input = self.gamepad.getY()
         self.rotate_input = self.gamepad.getZ()
 
+        self.intake_driverInput = self.flightStick.getRawButton(2)
+        self.shooter_driverInput = self.flightStick.getRawButton(1)
+
         try:
             self.drivetrain.move(self.throttle_y_input, self.throttle_x_input, self.rotate_input)
             self.smart_dashboard.putString("Drivetrain:", "+")
@@ -36,6 +59,23 @@ class MyRobot(magicbot.MagicRobot):
         except:
             self.onException()
             self.smart_dashboard.putString("Drivetrain:", "-")
+        
+        #INTAKE/SHOOTER
+        #ikisi ayni anda calismamasi için bunu yaptim, yoksa sikinti cikabilir
+        #TODO: smartdashboard'a ata bu sistemin ne yaptigini?
+        if self.intake_driverInput:
+            self.intakeRunning = True
+            self.shooterRunning = False
+        self.intake.intake_begin()
+        
+        if self.shooter_driverInput:
+            self.shooterRunning = True
+            self.intakeRunning = False
+        self.shooter.shooter_begin(1, 1)
+        
+        
+
+        
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)
