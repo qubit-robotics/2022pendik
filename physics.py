@@ -5,6 +5,9 @@
 import wpilib.simulation
 import wpilib
 
+import halsim_gui
+import hal
+
 import ctre
 import ctre._simvictorspx
 
@@ -49,13 +52,19 @@ class PhysicsEngine:
         self.rr_motor = wpilib.simulation.PWMSim(robot.drive_rRight.getChannel())
 
         # Gyro
-        # self.gyro = wpilib.simulation.AnalogGyroSim(robot.gyro)
+        self.gyro = wpilib.simulation.AnalogGyroSim(robot.gyro)
 
-        # self.belt_upper = robot.belt_upper.getSimCollection()
-        # self.belt_lower = robot.belt_lower.getSimCollection()
+        self.belt_upper_collection = robot.belt_upper.getSimCollection()
+        self.belt_lower_collection = robot.belt_lower.getSimCollection()
 
-        # self.belt_upper_sim = wpilib.simulation.DCMotorSim(DCMotor.CIM(), 0.25, 0.00005)
-        # self.belt_upper_sim = wpilib.simulation.DCMotorSim(DCMotor.CIM(), 0.25, 0.00005)
+        self.belt_upper_gui = hal.SimDevice("Upper Belt[1]")
+        self.belt_lower_gui = hal.SimDevice("Lower Belt[1]")
+
+        self.belt_upper_sim = wpilib.simulation.DCMotorSim(DCMotor.CIM(), 0.25, 0.00005)
+        self.belt_lower_sim = wpilib.simulation.DCMotorSim(DCMotor.CIM(), 0.25, 0.00005)
+        
+        self.belt_upper_sim_output = self.belt_upper_gui.createDouble("Output", False, 0)
+        self.belt_lower_sim_output = self.belt_lower_gui.createDouble("Output", False, 0)
 
         self.drivetrain = drivetrains.MecanumDrivetrain()
         
@@ -78,15 +87,28 @@ class PhysicsEngine:
         speeds = self.drivetrain.calculate(lf_motor, lr_motor, rf_motor, rr_motor)
         pose = self.physics_controller.drive(speeds, tm_diff)
 
-        # v = wpilib.simulation.RoboRioSim.getVInVoltage()
-        # self.belt_upper.setBusVoltage(v)
-        # self.belt_upper_sim.setInputVoltage(self.belt_upper.getMotorOutputLeadVoltage())
-        # self.belt_upper_sim.update(tm_diff)
+        v = wpilib.simulation.RoboRioSim.getVInVoltage()
+
+        self.belt_upper_collection.setBusVoltage(v)
+        self.belt_lower_collection.setBusVoltage(v)
+
+        self.belt_upper_sim.setInputVoltage(self.belt_upper_collection.getMotorOutputLeadVoltage())
+        self.belt_lower_sim.setInputVoltage(self.belt_lower_collection.getMotorOutputLeadVoltage())
+
+        self.belt_upper_sim.update(tm_diff)
+        self.belt_lower_sim.update(tm_diff)
+
+        self.belt_upper_sim_output.set(self.belt_upper_collection.getMotorOutputLeadVoltage())
+        self.belt_lower_sim_output.set(self.belt_lower_collection.getMotorOutputLeadVoltage())
+
+        # wpilib.SmartDashboard.putNumber("belt_upper_sim_val", self.belt_upper_sim.getOutput())
+        # wpilib.SmartDashboard.putNumber("belt_lower_sim_val", self.belt_lower_sim.getOutput())
+
 
         # Update the gyro simulation
         # -> FRC gyros are positive clockwise, but the returned pose is positive
         #    counter-clockwise
-        # self.gyro.setAngle(-pose.rotation().degrees())
+        self.gyro.setAngle(-pose.rotation().degrees())
 
         self.model = wpilib.Mechanism2d(30, 30)
         wpilib.SmartDashboard.putData("Model", self.model)

@@ -5,6 +5,23 @@
         "visible": true
       }
     },
+    "Other Devices": {
+      "AnalogGyro[0]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Lower Belt[1]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Upper Belt[1]": {
+        "header": {
+          "open": true
+        }
+      }
+    },
     "PWM Outputs": {
       "window": {
         "visible": true

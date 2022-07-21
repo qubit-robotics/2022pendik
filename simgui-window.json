@@ -1,35 +1,40 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "720",
+      "height": "688",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
-      "width": "1280",
-      "xpos": "78",
-      "ypos": "40"
+      "width": "681",
+      "xpos": "246",
+      "ypos": "62"
     }
   },
   "Window": {
     "###/SmartDashboard/Field": {
+      "Collapsed": "1",
+      "Pos": "20,248",
+      "Size": "413,278"
+    },
+    "###/SmartDashboard/Model": {
       "Collapsed": "0",
-      "Pos": "250,-8",
-      "Size": "413,285"
+      "Pos": "400,400",
+      "Size": "200,200"
     },
     "###DIO": {
       "Collapsed": "0",
-      "Pos": "692,88",
+      "Pos": "171,97",
       "Size": "162,77"
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "-9,546",
+      "Pos": "-8,546",
       "Size": "283,146"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "250,465",
-      "Size": "796,155"
+      "Pos": "190,307",
+      "Size": "675,155"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -43,17 +48,17 @@
     },
     "###NetworkTables": {
       "Collapsed": "0",
-      "Pos": "250,277",
+      "Pos": "447,414",
       "Size": "750,185"
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "1025,20",
+      "Pos": "421,41",
       "Size": "250,695"
     },
     "###PWM Outputs": {
       "Collapsed": "0",
-      "Pos": "910,20",
+      "Pos": "287,46",
       "Size": "110,135"
     },
     "###RoboRIO": {
