@@ -9,9 +9,9 @@ from wpilib import SmartDashboard
 class MyRobot(magicbot.MagicRobot):
 
     ballCount = 1 #Robotu icinde 1 top ile baslat
-    shooter_valueFront = 0.5
-    shooter_valueRear = 0.5
 
+    shooter_speedChange_value = 0
+    shooter_speedChanged = False
     shooterRunning = False
     intakeRunning = False
 
@@ -20,10 +20,30 @@ class MyRobot(magicbot.MagicRobot):
     shooter_manual: ShooterEnabler
     intake: Intake
 
+    def shooter_speed_configuration(self):
+
+        if self.shooter_speedChange_value == 0:
+            self.shooter_valueFront = 0.5
+            self.shooter_valueRear = 0.5
+
+        if self.shooter_speedChange_value == 1:
+            self.shooter_valueFront = 1
+            self.shooter_valueRear = 0.5
+        
+        if self.shooter_speedChange_value == 2:
+            self.shooter_valueFront = 0.5
+            self.shooter_valueRear = 1
+        
+        if self.shooter_speedChange_value == 3:
+            self.shooter_valueFront = 1
+            self.shooter_valueRear = 1
+        if self.shooter_speedChanged:
+            print(f"Front: {self.shooter_valueFront} Rear: {self.shooter_valueRear}")
+            self.shooter_speedChanged = False
     def intake_shooter_control(self):
         self.intake_driverInput = self.flightStick.getRawButton(2)
         self.shooter_driverInput = self.flightStick.getRawButton(1)
-
+        self.shooter_changeSpeed_Input = self.flightStick.getRawButton(3)
         if self.intake_driverInput:
             print("intake tusa basti!")
             SmartDashboard.putString("shooterState","Inactive")
@@ -36,7 +56,13 @@ class MyRobot(magicbot.MagicRobot):
             SmartDashboard.putString("IntakeState","Inactive")
             self.shooterRunning = True
             self.intakeRunning = False
-
+        if self.shooter_changeSpeed_Input:
+            print("hiz degistirildi...")
+            if self.shooter_speedChange_value < 3:
+                self.shooter_speedChange_value += 1
+            else:
+                self.shooter_speedChange_value = 0
+            self.shooter_speedChanged = True
         self.shooterRunning, self.intakeRunning, self.ballCount = self.shooter.shooter_begin(self.shooterRunning, self.intakeRunning, self.ballCount)
         self.shooterRunning, self.intakeRunning, self.ballCount = self.intake.intake_begin(self.shooterRunning, self.intakeRunning, self.ballCount)
 
@@ -88,7 +114,7 @@ class MyRobot(magicbot.MagicRobot):
 
         except:
             self.onException()
-        
+        self.shooter_speed_configuration()
         self.intake_shooter_control()
 
         wpilib.SmartDashboard.putNumber("ballCount", self.ballCount)
