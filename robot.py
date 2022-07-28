@@ -1,3 +1,4 @@
+from re import S
 import magicbot
 import wpilib
 from subsystems.drivetrain import DriveTrain
@@ -12,8 +13,17 @@ class MyRobot(magicbot.MagicRobot):
 
     shooter_speedChange_value = 0
     shooter_speedChanged = False
+
     shooterRunning = False
     intakeRunning = False
+
+    shooter_valueFront = 0.5
+    shooter_valueRear = 0.5
+
+    shooterMode = {0: "Lower Hub Dipdibe",
+                   1: "Lower Hub",
+                   2: "Upper Hub",
+                   3: "Upper Hub 2 Metre"}
 
     drivetrain: DriveTrain
     shooter: Shooter
@@ -25,6 +35,7 @@ class MyRobot(magicbot.MagicRobot):
         if self.shooter_speedChange_value == 0:
             self.shooter_valueFront = 0.5
             self.shooter_valueRear = 0.5
+            
 
         if self.shooter_speedChange_value == 1:
             self.shooter_valueFront = 1
@@ -37,13 +48,20 @@ class MyRobot(magicbot.MagicRobot):
         if self.shooter_speedChange_value == 3:
             self.shooter_valueFront = 1
             self.shooter_valueRear = 1
+
         if self.shooter_speedChanged:
-            print(f"Front: {self.shooter_valueFront} Rear: {self.shooter_valueRear}")
             self.shooter_speedChanged = False
+
+            for i in self.shooterMode:
+                _state = (i == self.shooter_speedChange_value)
+                SmartDashboard.putBoolean(self.shooterMode.get(i), _state)
+            
+
     def intake_shooter_control(self):
         self.intake_driverInput = self.flightStick.getRawButton(2)
         self.shooter_driverInput = self.flightStick.getRawButton(1)
-        self.shooter_changeSpeed_Input = self.flightStick.getRawButton(3)
+        self.shooter_changeSpeed_Input = self.flightStick.getRawButtonPressed(3)
+
         if self.intake_driverInput:
             print("intake tusa basti!")
             SmartDashboard.putString("shooterState","Inactive")
@@ -56,15 +74,23 @@ class MyRobot(magicbot.MagicRobot):
             SmartDashboard.putString("IntakeState","Inactive")
             self.shooterRunning = True
             self.intakeRunning = False
+        
         if self.shooter_changeSpeed_Input:
-            print("hiz degistirildi...")
             if self.shooter_speedChange_value < 3:
                 self.shooter_speedChange_value += 1
             else:
                 self.shooter_speedChange_value = 0
             self.shooter_speedChanged = True
-        self.shooterRunning, self.intakeRunning, self.ballCount = self.shooter.shooter_begin(self.shooterRunning, self.intakeRunning, self.ballCount)
-        self.shooterRunning, self.intakeRunning, self.ballCount = self.intake.intake_begin(self.shooterRunning, self.intakeRunning, self.ballCount)
+
+        self.shooterRunning, self.intakeRunning, self.ballCount = self.shooter.shooter_begin(self.shooterRunning,
+                                                                                             self.intakeRunning,
+                                                                                             self.ballCount,
+                                                                                             self.shooter_valueFront,
+                                                                                             self.shooter_valueRear)
+        
+        self.shooterRunning, self.intakeRunning, self.ballCount = self.intake.intake_begin(self.shooterRunning, 
+                                                                                           self.intakeRunning, 
+                                                                                           self.ballCount)
 
     def createObjects(self):
         '''Create motors and stuff here'''
@@ -114,12 +140,14 @@ class MyRobot(magicbot.MagicRobot):
 
         except:
             self.onException()
-        self.shooter_speed_configuration()
+        
         self.intake_shooter_control()
+        self.shooter_speed_configuration()
 
         wpilib.SmartDashboard.putNumber("ballCount", self.ballCount)
-        wpilib.SmartDashboard.putNumber("intakeRunning", self.intakeRunning)
-        wpilib.SmartDashboard.putNumber("shooterRunning", self.shooterRunning)
+        wpilib.SmartDashboard.putBoolean("intakeRunning", self.intakeRunning)
+        wpilib.SmartDashboard.putBoolean("shooterRunning", self.shooterRunning)
+        
     
         
         
