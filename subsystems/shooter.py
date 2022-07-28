@@ -7,22 +7,19 @@ class ShooterEnabler:
     shooter_front1: ctre.VictorSPX
     shooter_front2: ctre.VictorSPX
     shooter_rear: ctre.VictorSPX
-
-    shooter_valueFront: float
-    shooter_valueRear: float
     
-    def shooter_shoot(self):
+    def shooter_shoot(self, front, rear):
         """
         """
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, self.shooter_valueFront)
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, self.shooter_valueFront)
-        self.shooter_rear.set(ctre.ControlMode.PercentOutput, self.shooter_valueRear)
+        self.shooter_front1.set(ctre.ControlMode.PercentOutput, front)
+        self.shooter_front2.set(ctre.ControlMode.PercentOutput, front)
+        self.shooter_rear.set(ctre.ControlMode.PercentOutput, rear)
 
     def shooter_stop(self):
         """
         """
         self.shooter_front1.set(ctre.ControlMode.PercentOutput, 0)
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, 0)
+        self.shooter_front2.set(ctre.ControlMode.PercentOutput, 0)
         self.shooter_rear.set(ctre.ControlMode.PercentOutput, 0)
 
     def execute(self):
@@ -45,7 +42,7 @@ class Shooter:
 
     ballInPlace = False
 
-    def shooter_begin(self, shooterRunning, intakeRunning, ballCount):
+    def shooter_begin(self, shooterRunning, intakeRunning, ballCount, front, rear):
         if shooterRunning:
             if ballCount >= 1 and not intakeRunning:
                 if self.switch_upper.get() and not self.ballInPlace:
@@ -63,7 +60,7 @@ class Shooter:
                     self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
                     if not self.shooter_timer.hasPeriodPassed(3):
                         SmartDashboard.putString("shooterState","Atisa baslandi!")
-                        self.shooter_manual.shooter_shoot()
+                        self.shooter_manual.shooter_shoot(front, rear)
                         return shooterRunning, intakeRunning, ballCount
                     else:
                         SmartDashboard.putString("shooterState","Atis Bitti.")
