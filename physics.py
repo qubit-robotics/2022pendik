@@ -52,7 +52,7 @@ class PhysicsEngine:
         self.rr_motor = wpilib.simulation.PWMSim(robot.drive_rRight.getChannel())
 
         # Gyro
-        self.gyro = wpilib.simulation.AnalogGyroSim(robot.gyro)
+        self.gyro = wpilib.simulation.ADIS16448_IMUSim(robot.gyro)
 
         self.belt_upper_collection = robot.belt_upper.getSimCollection()
         self.belt_lower_collection = robot.belt_lower.getSimCollection()
@@ -108,7 +108,7 @@ class PhysicsEngine:
         # Update the gyro simulation
         # -> FRC gyros are positive clockwise, but the returned pose is positive
         #    counter-clockwise
-        self.gyro.setAngle(-pose.rotation().degrees())
+        self.gyro.setGyroAngleY(-pose.rotation().degrees())
 
         self.model = wpilib.Mechanism2d(30, 30)
         wpilib.SmartDashboard.putData("Model", self.model)

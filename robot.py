@@ -1,24 +1,16 @@
-from re import S
+from tkinter.tix import Tree
 import magicbot
 import wpilib
 from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
 import ctre
-from wpilib import SmartDashboard
+from wpilib import SmartDashboard as sd
 
 class MyRobot(magicbot.MagicRobot):
 
-    ballCount = 1 #Robotu icinde 1 top ile baslat
-
     shooter_speedChange_value = 0
     shooter_speedChanged = False
-
-    shooterRunning = False
-    intakeRunning = False
-
-    shooter_valueFront = 0.5
-    shooter_valueRear = 0.5
 
     shooterMode = {0: "Lower Hub Dipdibe",
                    1: "Lower Hub",
@@ -33,28 +25,27 @@ class MyRobot(magicbot.MagicRobot):
     def shooter_speed_configuration(self):
 
         if self.shooter_speedChange_value == 0:
-            self.shooter_valueFront = 0.5
-            self.shooter_valueRear = 0.5
+            sd.putNumber("shooter_valueFront", 0.5)
+            sd.putNumber("shooter_valueRear", 0.5)
             
-
         if self.shooter_speedChange_value == 1:
-            self.shooter_valueFront = 1
-            self.shooter_valueRear = 0.5
+            sd.putNumber("shooter_valueFront", 1)
+            sd.putNumber("shooter_valueRear", 0.5)
         
         if self.shooter_speedChange_value == 2:
-            self.shooter_valueFront = 0.5
-            self.shooter_valueRear = 1
+            sd.putNumber("shooter_valueFront", 0.5)
+            sd.putNumber("shooter_valueRear", 1)
         
         if self.shooter_speedChange_value == 3:
-            self.shooter_valueFront = 1
-            self.shooter_valueRear = 1
+            sd.putNumber("shooter_valueFront", 1)
+            sd.putNumber("shooter_valueRear", 1)
 
         if self.shooter_speedChanged:
             self.shooter_speedChanged = False
 
             for i in self.shooterMode:
                 _state = (i == self.shooter_speedChange_value)
-                SmartDashboard.putBoolean(self.shooterMode.get(i), _state)
+                sd.putBoolean(self.shooterMode.get(i), _state)
             
 
     def intake_shooter_control(self):
@@ -64,16 +55,16 @@ class MyRobot(magicbot.MagicRobot):
 
         if self.intake_driverInput:
             print("intake tusa basti!")
-            SmartDashboard.putString("shooterState","Inactive")
-            self.intakeRunning = True
-            self.shooterRunning = False
+            sd.putString("shooterState","Inactive")
+            sd.putBoolean("intakeRunning", True)
+            sd.putBoolean("shooterRunning", False)
 
         
         if self.shooter_driverInput:
             print("shooter tusa basti!")
-            SmartDashboard.putString("IntakeState","Inactive")
-            self.shooterRunning = True
-            self.intakeRunning = False
+            sd.putString("IntakeState","Inactive")
+            sd.putBoolean("intakeRunning", False)
+            sd.putBoolean("shooterRunning", True)
         
         if self.shooter_changeSpeed_Input:
             if self.shooter_speedChange_value < 3:
@@ -82,15 +73,8 @@ class MyRobot(magicbot.MagicRobot):
                 self.shooter_speedChange_value = 0
             self.shooter_speedChanged = True
 
-        self.shooterRunning, self.intakeRunning, self.ballCount = self.shooter.shooter_begin(self.shooterRunning,
-                                                                                             self.intakeRunning,
-                                                                                             self.ballCount,
-                                                                                             self.shooter_valueFront,
-                                                                                             self.shooter_valueRear)
-        
-        self.shooterRunning, self.intakeRunning, self.ballCount = self.intake.intake_begin(self.shooterRunning, 
-                                                                                           self.intakeRunning, 
-                                                                                           self.ballCount)
+        self.shooter.shooter_begin()
+        self.intake.intake_begin()
 
     def createObjects(self):
         '''Create motors and stuff here'''
@@ -105,7 +89,8 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_fRight.setSafetyEnabled(0)
         self.drive_rRight.setSafetyEnabled(0)
 
-        self.gyro = wpilib.AnalogGyro(0)
+        self.gyro = wpilib.ADIS16448_IMU()
+        self.gyro.calibrate()
 
         self.gamepad = wpilib.Joystick(0)
         self.flightStick = wpilib.Joystick(1)
@@ -124,8 +109,11 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter_timer = wpilib.Timer()
         self.cooldown_timer = wpilib.Timer() # intake ve shooter komutlarina cooldown ekleyecegiz, karisiklik riski az olacak.
 
-    def teleopInit(self):
-        '''Called when teleop starts; optional'''
+        sd.putNumber("ballCount", 1)
+        sd.putBoolean("intakeRunning", False)
+        sd.putBoolean("shooterRunning", False)
+        sd.putNumber("shooter_valueFront", 0.5)
+        sd.putNumber("shooter_valueRear", 0.5)
 
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
@@ -143,10 +131,6 @@ class MyRobot(magicbot.MagicRobot):
         
         self.intake_shooter_control()
         self.shooter_speed_configuration()
-
-        wpilib.SmartDashboard.putNumber("ballCount", self.ballCount)
-        wpilib.SmartDashboard.putBoolean("intakeRunning", self.intakeRunning)
-        wpilib.SmartDashboard.putBoolean("shooterRunning", self.shooterRunning)
         
     
         

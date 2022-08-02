@@ -1,19 +1,19 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "688",
+      "height": "697",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
-      "width": "681",
-      "xpos": "246",
-      "ypos": "62"
+      "width": "1366",
+      "xpos": "-15",
+      "ypos": "76"
     }
   },
   "Window": {
     "###/SmartDashboard/Field": {
-      "Collapsed": "1",
-      "Pos": "20,248",
+      "Collapsed": "0",
+      "Pos": "71,104",
       "Size": "413,278"
     },
     "###/SmartDashboard/Model": {
@@ -23,18 +23,18 @@
     },
     "###DIO": {
       "Collapsed": "0",
-      "Pos": "171,97",
+      "Pos": "228,268",
       "Size": "162,77"
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "-8,546",
+      "Pos": "31,521",
       "Size": "283,146"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "190,307",
-      "Size": "675,155"
+      "Pos": "188,364",
+      "Size": "796,155"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -53,8 +53,8 @@
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "421,41",
-      "Size": "250,695"
+      "Pos": "412,19",
+      "Size": "250,667"
     },
     "###PWM Outputs": {
       "Collapsed": "0",
@@ -68,7 +68,7 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "19,331",
+      "Pos": "29,250",
       "Size": "192,218"
     },
     "###Timing": {
