@@ -42,6 +42,14 @@
       "/SmartDashboard/Autonomous Mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Model": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "image": "C:\\Users\\Berke\\Documents\\python-qubit-simulation\\6367\\2022-robot-main\\robot\\2022-field.png",
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {

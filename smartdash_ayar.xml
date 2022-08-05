@@ -1,0 +1,100 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="hubYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="295" y="261"/>
+		<width>144</width>
+	</widget>
+	<widget field="shooter_valueFront" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="482" y="363"/>
+	</widget>
+	<widget field="shooter_valueRear" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="300" y="364"/>
+	</widget>
+	<widget field="GORUS" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="293" y="219"/>
+		<width>144</width>
+		<height>15</height>
+	</widget>
+	<widget field="hubDistance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="294" y="240"/>
+	</widget>
+	<widget field="Lower Hub Dipdibe" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="150" y="29"/>
+		<width>116</width>
+		<height>29</height>
+	</widget>
+	<widget field="Lower Hub" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="277" y="30"/>
+		<width>76</width>
+		<height>29</height>
+	</widget>
+	<widget field="Upper Hub" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="362" y="31"/>
+		<width>76</width>
+		<height>27</height>
+	</widget>
+	<widget field="Upper Hub 2 Metre" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="452" y="32"/>
+		<width>117</width>
+		<height>26</height>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="504" y="208"/>
+		<property name="Text" value="BAGLANTI"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
+		<location x="453" y="242"/>
+		<width>156</width>
+		<height>78</height>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="137" y="192"/>
+		<property name="Text" value="TOP SAYISI"/>
+	</static-widget>
+	<widget field="ballCount" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.SimpleDial">
+		<location x="40" y="214"/>
+		<property name="Upper Limit" value="2.0"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="232" y="98"/>
+		<property name="Text" value="SHOOTER"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="84" y="96"/>
+		<width>48</width>
+		<height>14</height>
+		<property name="Text" value="INTAKE"/>
+	</static-widget>
+	<widget field="shooterRunning" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="224" y="121"/>
+		<width>137</width>
+		<height>57</height>
+	</widget>
+	<widget field="IntakeState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="390" y="120"/>
+		<width>239</width>
+		<height>21</height>
+		<property name="Foreground" value="255.255.255.255"/>
+		<property name="Background" value="255.0.51.255"/>
+	</widget>
+	<widget field="shooterState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="384" y="143"/>
+		<width>246</width>
+		<height>22</height>
+		<property name="Foreground" value="255.255.255.255"/>
+		<property name="Background" value="255.0.0.255"/>
+	</widget>
+	<widget field="Autonomous Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="3" y="2"/>
+	</widget>
+	<widget field="intakeRunning" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="71" y="121"/>
+		<width>138</width>
+		<height>53</height>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="Field"/>
+	<hidden field="Model"/>
+</xml>

@@ -13,12 +13,14 @@ import ctre._simvictorspx
 
 import constants
 
-import wpimath.system
+import wpimath.geometry
 
 from pyfrc.physics.core import PhysicsInterface
 from pyfrc.physics import drivetrains
 
 from wpimath.system.plant import DCMotor
+
+from photonvision import SimPhotonCamera, SimVisionTarget, SimVisionSystem
 
 import typing
 
@@ -42,6 +44,7 @@ class PhysicsEngine:
         :param physics_controller: `pyfrc.physics.core.Physics` object
                                    to communicate simulation effects to
         """
+        self.field = wpilib.Field2d()
 
         self.physics_controller = physics_controller
 
@@ -67,6 +70,21 @@ class PhysicsEngine:
         self.belt_lower_sim_output = self.belt_lower_gui.createDouble("Output", False, 0)
 
         self.drivetrain = drivetrains.MecanumDrivetrain()
+
+        ##Photonvision
+        self.cam = SimVisionSystem("camera1",
+                                    constants.kCamDiagFOV,
+                                    constants.kCamPitch,
+                                    wpimath.geometry.Transform2d(), #Kameranin robotun merkezinde ve 76cm yuksekte kabul ediyorum.
+                                    constants.kCamHeightOffGround,
+                                    constants.kMaxLEDRange,
+                                    constants.kCamResolutionWidth,
+                                    constants.kCamResolutionHeight,
+                                    10)
+
+        #Sahanin ortasinda 1 adet her tarafa bakan reflektif bant oldugunu varsayiyorum.
+        self.targetPose = wpimath.geometry.Pose2d(wpimath.geometry.Translation2d(x=8.23, y=4.115), wpimath.geometry.Rotation2d(0.0))
+        self.cam.addSimVisionTarget(SimVisionTarget(self.targetPose, 2.64, 0.14, 0.05))
         
     def update_sim(self, now: float, tm_diff: float) -> None:
         """
@@ -101,6 +119,10 @@ class PhysicsEngine:
         self.belt_upper_sim_output.set(self.belt_upper_collection.getMotorOutputLeadVoltage())
         self.belt_lower_sim_output.set(self.belt_lower_collection.getMotorOutputLeadVoltage())
 
+        #PhotonVision
+
+
+
         # wpilib.SmartDashboard.putNumber("belt_upper_sim_val", self.belt_upper_sim.getOutput())
         # wpilib.SmartDashboard.putNumber("belt_lower_sim_val", self.belt_lower_sim.getOutput())
 
@@ -112,6 +134,9 @@ class PhysicsEngine:
 
         self.model = wpilib.Mechanism2d(30, 30)
         wpilib.SmartDashboard.putData("Model", self.model)
+
+        self.field.setRobotPose(pose)
+        self.cam.processFrame(pose)
 
         outside = self.model.getRoot("outside", EDGE, 10)
         l = outside.appendLigament("l1", INDEXER_LEN, 0, color=GRAY)

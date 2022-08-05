@@ -1,9 +1,11 @@
 from tkinter.tix import Tree
 import magicbot
 import wpilib
+from subsystems.camera import Camera
 from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
+import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
 
@@ -21,6 +23,7 @@ class MyRobot(magicbot.MagicRobot):
     shooter: Shooter
     shooter_manual: ShooterEnabler
     intake: Intake
+    camera: Camera
 
     def shooter_speed_configuration(self):
 
@@ -78,6 +81,7 @@ class MyRobot(magicbot.MagicRobot):
 
     def createObjects(self):
         '''Create motors and stuff here'''
+        self.cam = photonvision.PhotonCamera("camera1")
 
         self.drive_fLeft = wpilib.PWMVictorSPX(0)
         self.drive_rLeft = wpilib.PWMVictorSPX(1)
@@ -114,6 +118,10 @@ class MyRobot(magicbot.MagicRobot):
         sd.putBoolean("shooterRunning", False)
         sd.putNumber("shooter_valueFront", 0.5)
         sd.putNumber("shooter_valueRear", 0.5)
+
+    def robotPeriodic(self):
+        self.camera.get_distance()
+        self.camera.get_yaw()
 
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
