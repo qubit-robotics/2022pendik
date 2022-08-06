@@ -1,10 +1,12 @@
 from tkinter.tix import Tree
 import magicbot
 import wpilib
+from wpimath.controller import PIDController
 from subsystems.camera import Camera
 from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
+from subsystems.climb import Climb
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -24,6 +26,8 @@ class MyRobot(magicbot.MagicRobot):
     shooter_manual: ShooterEnabler
     intake: Intake
     camera: Camera
+    climb: Climb
+    cam: photonvision.PhotonCamera
 
     def shooter_speed_configuration(self):
 
@@ -50,6 +54,25 @@ class MyRobot(magicbot.MagicRobot):
                 _state = (i == self.shooter_speedChange_value)
                 sd.putBoolean(self.shooterMode.get(i), _state)
             
+    def climb_control(self):
+        self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
+        self.climbMotor1_UpInput = self.flightStick.getRawButton(5)
+        self.climbMotor2_LowInput = self.flightStick.getRawButton(6)
+        self.climbMotor2_UpInput = self.flightStick.getRawButton(7)
+        
+        if self.climbMotor1_LowInput:
+            sd.putNumber("climbMotor1",-1)
+        elif self.climbMotor1_UpInput:
+            sd.putNumber("climbMotor1",1)
+        else:
+            sd.putNumber("climbMotor1",0)
+
+        if self.climbMotor2_LowInput:
+            sd.putNumber("climbMotor2",-1)
+        elif self.climbMotor2_UpInput:
+            sd.putNumber("climbMotor2",1)
+        else:
+            sd.putNumber("climbMotor2",0)
 
     def intake_shooter_control(self):
         self.intake_driverInput = self.flightStick.getRawButton(2)
@@ -83,6 +106,13 @@ class MyRobot(magicbot.MagicRobot):
         '''Create motors and stuff here'''
         self.cam = photonvision.PhotonCamera("camera1")
 
+        self.LINEAR_P = 0.2
+        self.LINEAR_D = 0
+        self.ANGULAR_P = 0.02
+        self.ANGULAR_D = 0
+        self.Goal_Range_Meter = 3
+        self.turnController = PIDController(self.ANGULAR_P, 0.01, self.ANGULAR_D)
+        self.forwardController = PIDController(self.LINEAR_P, 0.1, self.LINEAR_D)
         self.drive_fLeft = wpilib.PWMVictorSPX(0)
         self.drive_rLeft = wpilib.PWMVictorSPX(1)
         self.drive_fRight = wpilib.PWMVictorSPX(2)
@@ -102,6 +132,9 @@ class MyRobot(magicbot.MagicRobot):
         self.belt_lower = ctre.WPI_VictorSPX(1)
         self.belt_upper = ctre.WPI_VictorSPX(2)
 
+        self.climb_low = ctre.WPI_VictorSPX(4)
+        self.climb_up = ctre.WPI_VictorSPX(5)
+
         self.switch_upper = wpilib.DigitalInput(1)
         self.switch_lower = wpilib.DigitalInput(2)
 
@@ -118,11 +151,47 @@ class MyRobot(magicbot.MagicRobot):
         sd.putBoolean("shooterRunning", False)
         sd.putNumber("shooter_valueFront", 0.5)
         sd.putNumber("shooter_valueRear", 0.5)
+        sd.putNumber("climbMotor1",0)
+        sd.putNumber("climbMotor2",0)
+        sd.putBoolean("atis_Kontrol",False)
+    def autoAimTape(self):
+        if self.cam.hasTargets():
+            self.rotationSpeed = -(self.turnController.calculate(self.cam.getLatestResult().getBestTarget().getYaw(), 0))
+            self.forwardSpeed = -self.forwardController.calculate(self.camera.get_distance(), self.GOAL_RANGE_METERS)
 
+            self.turnController.setTolerance(0.1)
+            self.forwardController.setTolerance(0.1)
+
+            if self.turnController.atSetpoint() and self.forwardController.atSetpoint():
+                pass
+            else:
+                self.drivetrain.move(self.forwardSpeed, self.throttle_x_input, self.rotationSpeed)
+    
+    def atis_kontrol(self):
+        range = self.camera.get_distance()
+        tolerance = 0.2
+        if self.shooter_speedChange_value == 0:
+            goal = 0.5
+        elif self.shooter_speedChange_value == 1:
+            goal = 1
+        elif self.shooter_speedChange_value == 2:
+            goal = 3
+        elif self.shooter_speedChange_value == 3:
+            goal = 2
+        if ((range-tolerance) < goal) and ((range+tolerance) > goal):
+            sd.putBoolean("atis_Kontrol",True)
+        else:
+            sd.putBoolean("atis_Kontrol",False)
     def robotPeriodic(self):
         self.camera.get_distance()
         self.camera.get_yaw()
 
+    def autonomousInit(self):
+        pass
+    
+    def autonomousPeriodic(self):
+        self.autoAimTape()
+    
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
         # DRIVETRAIN
@@ -139,8 +208,10 @@ class MyRobot(magicbot.MagicRobot):
         
         self.intake_shooter_control()
         self.shooter_speed_configuration()
-        
+        self.climb.set_climbMotorSpeed()
+        self.atis_kontrol()
     
+
         
         
 
