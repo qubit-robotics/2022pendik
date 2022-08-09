@@ -1,4 +1,4 @@
-kMaxSpeedMetersPerSecond = 3
+kMaxSpeedMetersPerSecond = 1
 kMaxAccelerationMetersPerSecondSquared = 0.5
 kMaxVoltage = 10
 
@@ -20,6 +20,3 @@ kCamResolutionWidth = 640
 kCamResolutionHeight = 480
 kMinTargetArea = 10
 kTargetHeight = 2.64
-
-kLowerHubRange = 1
-kUpperHubRange = 2

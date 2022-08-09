@@ -1,10 +1,14 @@
-from tkinter.tix import Tree
+import math
 import magicbot
 import wpilib
+from wpimath.controller import PIDController
 from subsystems.camera import Camera
 from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
+from subsystems.climb import Climb
+from components.path import RamseteComponent
+from components.aimbot import AimBot
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -24,6 +28,9 @@ class MyRobot(magicbot.MagicRobot):
     shooter_manual: ShooterEnabler
     intake: Intake
     camera: Camera
+    climb: Climb
+    aimbot: AimBot
+    ramsete: RamseteComponent
 
     def shooter_speed_configuration(self):
 
@@ -50,6 +57,25 @@ class MyRobot(magicbot.MagicRobot):
                 _state = (i == self.shooter_speedChange_value)
                 sd.putBoolean(self.shooterMode.get(i), _state)
             
+    def climb_control(self):
+        self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
+        self.climbMotor1_UpInput = self.flightStick.getRawButton(5)
+        self.climbMotor2_LowInput = self.flightStick.getRawButton(6)
+        self.climbMotor2_UpInput = self.flightStick.getRawButton(7)
+        
+        if self.climbMotor1_LowInput:
+            sd.putNumber("climbMotor1",-1)
+        elif self.climbMotor1_UpInput:
+            sd.putNumber("climbMotor1",1)
+        else:
+            sd.putNumber("climbMotor1",0)
+
+        if self.climbMotor2_LowInput:
+            sd.putNumber("climbMotor2",-1)
+        elif self.climbMotor2_UpInput:
+            sd.putNumber("climbMotor2",1)
+        else:
+            sd.putNumber("climbMotor2",0)
 
     def intake_shooter_control(self):
         self.intake_driverInput = self.flightStick.getRawButton(2)
@@ -93,7 +119,12 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_fRight.setSafetyEnabled(0)
         self.drive_rRight.setSafetyEnabled(0)
 
-        self.gyro = wpilib.ADIS16448_IMU()
+        self.drive_FrontLeftEncoder = wpilib.Encoder(3,4, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+
+        self.gyro = wpilib.ADXRS450_Gyro()
         self.gyro.calibrate()
 
         self.gamepad = wpilib.Joystick(0)
@@ -101,6 +132,9 @@ class MyRobot(magicbot.MagicRobot):
 
         self.belt_lower = ctre.WPI_VictorSPX(1)
         self.belt_upper = ctre.WPI_VictorSPX(2)
+
+        self.climb_low = ctre.WPI_VictorSPX(4)
+        self.climb_up = ctre.WPI_VictorSPX(5)
 
         self.switch_upper = wpilib.DigitalInput(1)
         self.switch_lower = wpilib.DigitalInput(2)
@@ -118,6 +152,25 @@ class MyRobot(magicbot.MagicRobot):
         sd.putBoolean("shooterRunning", False)
         sd.putNumber("shooter_valueFront", 0.5)
         sd.putNumber("shooter_valueRear", 0.5)
+        sd.putNumber("climbMotor1",0)
+        sd.putNumber("climbMotor2",0)
+        sd.putBoolean("atis_Kontrol",False)
+
+    def atis_kontrol(self):
+        range = sd.getNumber("hubDistance", 0)
+        tolerance = 0.2
+        if self.shooter_speedChange_value == 0:
+            goal = 0.5
+        elif self.shooter_speedChange_value == 1:
+            goal = 1
+        elif self.shooter_speedChange_value == 2:
+            goal = 3
+        elif self.shooter_speedChange_value == 3:
+            goal = 2
+        if ((range-tolerance) < goal) and ((range+tolerance) > goal):
+            sd.putBoolean("atis_Kontrol",True)
+        else:
+            sd.putBoolean("atis_Kontrol",False)
 
     def robotPeriodic(self):
         self.camera.get_distance()
@@ -139,8 +192,10 @@ class MyRobot(magicbot.MagicRobot):
         
         self.intake_shooter_control()
         self.shooter_speed_configuration()
-        
+        self.climb.set_climbMotorSpeed()
+        self.atis_kontrol()
     
+
         
         
 
