@@ -1,4 +1,4 @@
-from tkinter.tix import Tree
+import math
 import magicbot
 import wpilib
 from wpimath.controller import PIDController
@@ -7,6 +7,8 @@ from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
 from subsystems.climb import Climb
+from components.path import RamseteComponent
+from components.aimbot import AimBot
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -27,7 +29,8 @@ class MyRobot(magicbot.MagicRobot):
     intake: Intake
     camera: Camera
     climb: Climb
-    cam: photonvision.PhotonCamera
+    aimbot: AimBot
+    ramsete: RamseteComponent
 
     def shooter_speed_configuration(self):
 
@@ -106,13 +109,6 @@ class MyRobot(magicbot.MagicRobot):
         '''Create motors and stuff here'''
         self.cam = photonvision.PhotonCamera("camera1")
 
-        self.LINEAR_P = 0.2
-        self.LINEAR_D = 0
-        self.ANGULAR_P = 0.02
-        self.ANGULAR_D = 0
-        self.Goal_Range_Meter = 3
-        self.turnController = PIDController(self.ANGULAR_P, 0.01, self.ANGULAR_D)
-        self.forwardController = PIDController(self.LINEAR_P, 0.1, self.LINEAR_D)
         self.drive_fLeft = wpilib.PWMVictorSPX(0)
         self.drive_rLeft = wpilib.PWMVictorSPX(1)
         self.drive_fRight = wpilib.PWMVictorSPX(2)
@@ -123,7 +119,12 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_fRight.setSafetyEnabled(0)
         self.drive_rRight.setSafetyEnabled(0)
 
-        self.gyro = wpilib.ADIS16448_IMU()
+        self.drive_FrontLeftEncoder = wpilib.Encoder(3,4, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+
+        self.gyro = wpilib.ADXRS450_Gyro()
         self.gyro.calibrate()
 
         self.gamepad = wpilib.Joystick(0)
@@ -154,21 +155,9 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
-    def autoAimTape(self):
-        if self.cam.hasTargets():
-            self.rotationSpeed = -(self.turnController.calculate(self.cam.getLatestResult().getBestTarget().getYaw(), 0))
-            self.forwardSpeed = -self.forwardController.calculate(self.camera.get_distance(), self.GOAL_RANGE_METERS)
 
-            self.turnController.setTolerance(0.1)
-            self.forwardController.setTolerance(0.1)
-
-            if self.turnController.atSetpoint() and self.forwardController.atSetpoint():
-                pass
-            else:
-                self.drivetrain.move(self.forwardSpeed, self.throttle_x_input, self.rotationSpeed)
-    
     def atis_kontrol(self):
-        range = self.camera.get_distance()
+        range = sd.getNumber("hubDistance", 0)
         tolerance = 0.2
         if self.shooter_speedChange_value == 0:
             goal = 0.5
@@ -182,16 +171,11 @@ class MyRobot(magicbot.MagicRobot):
             sd.putBoolean("atis_Kontrol",True)
         else:
             sd.putBoolean("atis_Kontrol",False)
+
     def robotPeriodic(self):
         self.camera.get_distance()
         self.camera.get_yaw()
 
-    def autonomousInit(self):
-        pass
-    
-    def autonomousPeriodic(self):
-        self.autoAimTape()
-    
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
         # DRIVETRAIN

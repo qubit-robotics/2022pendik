@@ -16,7 +16,8 @@ import constants
 import wpimath.geometry
 
 from pyfrc.physics.core import PhysicsInterface
-from pyfrc.physics import drivetrains
+import pyfrc.physics.drivetrains
+from pyfrc.physics.units import units
 
 from wpimath.system.plant import DCMotor
 
@@ -54,8 +55,14 @@ class PhysicsEngine:
         self.rf_motor = wpilib.simulation.PWMSim(robot.drive_fRight.getChannel())
         self.rr_motor = wpilib.simulation.PWMSim(robot.drive_rRight.getChannel())
 
+        self.FrontLeft_encoder = wpilib.simulation.EncoderSim(robot.drive_FrontLeftEncoder)
+        self.FrontRight_encoder = wpilib.simulation.EncoderSim(robot.drive_FrontRightEncoder)
+
+        self.left_encoder_counter_front = 0.0
+        self.right_encoder_counter_front = 0.0
+
         # Gyro
-        self.gyro = wpilib.simulation.ADIS16448_IMUSim(robot.gyro)
+        self.gyro = wpilib.simulation.ADXRS450_GyroSim(robot.gyro)
 
         self.belt_upper_collection = robot.belt_upper.getSimCollection()
         self.belt_lower_collection = robot.belt_lower.getSimCollection()
@@ -69,7 +76,12 @@ class PhysicsEngine:
         self.belt_upper_sim_output = self.belt_upper_gui.createDouble("Output", False, 0)
         self.belt_lower_sim_output = self.belt_lower_gui.createDouble("Output", False, 0)
 
-        self.drivetrain = drivetrains.MecanumDrivetrain()
+        self.drivetrain = pyfrc.physics.drivetrains.MecanumDrivetrain(
+            0.5 * units.meter,
+            0.5 * units.meter,
+            1 * units.mps
+        )
+
 
         ##Photonvision
         self.cam = SimVisionSystem("camera1",
@@ -130,7 +142,7 @@ class PhysicsEngine:
         # Update the gyro simulation
         # -> FRC gyros are positive clockwise, but the returned pose is positive
         #    counter-clockwise
-        self.gyro.setGyroAngleY(-pose.rotation().degrees())
+        self.gyro.setAngle(-pose.rotation().degrees())
 
         self.model = wpilib.Mechanism2d(30, 30)
         wpilib.SmartDashboard.putData("Model", self.model)
@@ -138,13 +150,12 @@ class PhysicsEngine:
         self.field.setRobotPose(pose)
         self.cam.processFrame(pose)
 
-        outside = self.model.getRoot("outside", EDGE, 10)
-        l = outside.appendLigament("l1", INDEXER_LEN, 0, color=GRAY)
-        # l = l.appendLigament("l2", 20, 25, color=GRAY)
-        # l = l.appendLigament("l3", 20, 25, color=GRAY)
-        # l = l.appendLigament("l4", 20, 25, color=GRAY)
-        # l = l.appendLigament("l5", 30, 30, color=GRAY)
-        # l = l.appendLigament("l6", 20, 20, color=GRAY)
+        self.left_encoder_counter_front += self.drivetrain.wheelSpeeds.frontLeft * tm_diff
+        self.right_encoder_counter_front += self.drivetrain.wheelSpeeds.frontRight * tm_diff
 
-        inside = self.model.getRoot("inside", EDGE, 20)
-        inside.appendLigament("l1", INDEXER_LEN, 0, color=GRAY)
+        self.FrontLeft_encoder.setDistance(self.left_encoder_counter_front)
+        self.FrontRight_encoder.setDistance(self.right_encoder_counter_front)
+
+        self.FrontLeft_encoder.setRate(self.drivetrain.wheelSpeeds.frontLeft)
+        self.FrontRight_encoder.setRate(self.drivetrain.wheelSpeeds.frontRight)
+
