@@ -27,7 +27,6 @@ class AimBot:
     def execute(self):
 
         if self.cam.hasTargets():
-            print("here")
             rotationSpeed = self.turnController.calculate(sd.getNumber("hubYaw", 0), 0)
             forwardSpeed = self.forwardController.calculate(sd.getNumber("hubDistance", 0), self.desiredDistance)
 
@@ -37,7 +36,6 @@ class AimBot:
             if self.turnController.atSetpoint() and self.forwardController.atSetpoint():
                 sd.putBoolean("auto_botInPlace", True)
             else:
-                print("gitti", forwardSpeed, rotationSpeed)
                 self.drivetrain.move(forwardSpeed, 0.0, rotationSpeed)
                 sd.putBoolean("auto_botInPlace", False)
         else:

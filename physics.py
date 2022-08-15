@@ -17,6 +17,7 @@ import wpimath.geometry
 
 from pyfrc.physics.core import PhysicsInterface
 import pyfrc.physics.drivetrains
+import pyfrc.physics.motor_cfgs
 from pyfrc.physics.units import units
 
 from wpimath.system.plant import DCMotor
@@ -60,6 +61,16 @@ class PhysicsEngine:
 
         self.left_encoder_counter_front = 0.0
         self.right_encoder_counter_front = 0.0
+
+        self.shooter_encoder = wpilib.simulation.EncoderSim(robot.shooter_encoder)
+        #eylemsizlik momenti sallamasyon
+        self.flywheelSim = wpilib.simulation.FlywheelSim(
+            DCMotor.RS775_125(2),
+            3.25,
+            0.1,
+        )
+
+        self.shooter_motor_collection = robot.shooter_front1.getSimCollection()
 
         # Gyro
         self.gyro = wpilib.simulation.ADXRS450_GyroSim(robot.gyro)
@@ -158,4 +169,12 @@ class PhysicsEngine:
 
         self.FrontLeft_encoder.setRate(self.drivetrain.wheelSpeeds.frontLeft)
         self.FrontRight_encoder.setRate(self.drivetrain.wheelSpeeds.frontRight)
+
+        self.flywheelSim.update(tm_diff)
+        self.flywheelSim.setInputVoltage(
+            self.shooter_motor_collection.getMotorOutputLeadVoltage()
+        )
+        self.shooter_encoder.setRate(
+            self.flywheelSim.getAngularVelocity()
+        )
 

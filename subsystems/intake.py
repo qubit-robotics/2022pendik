@@ -20,6 +20,7 @@ class Intake:
                 return self.intake_secondBall()
             else:
                 sd.putString("IntakeState","2 ADET TOPUN VAR!!!")
+                sd.putBoolean("intakeRunning", False)
 
     def intake_firstBall(self):
         if self.switch_lower.get():

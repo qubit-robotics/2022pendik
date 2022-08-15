@@ -9,11 +9,10 @@ class ShooterEnabler:
     shooter_rear: ctre.VictorSPX
     
     def shooter_shoot(self):
-        front = sd.getNumber("shooter_valueFront", 0.5)
-        rear = sd.getNumber("shooter_valueRear", 0.5)
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, front)
-        self.shooter_front2.set(ctre.ControlMode.PercentOutput, front)
-        self.shooter_rear.set(ctre.ControlMode.PercentOutput, rear)
+        #PID Kontrolu gibi seyleri buraya yap
+        self.shooter_front1.set(ctre.ControlMode.PercentOutput, 1)
+        self.shooter_front2.set(ctre.ControlMode.PercentOutput, 1)
+        self.shooter_rear.set(ctre.ControlMode.PercentOutput, 1)
 
     def shooter_stop(self):
         self.shooter_front1.set(ctre.ControlMode.PercentOutput, 0)

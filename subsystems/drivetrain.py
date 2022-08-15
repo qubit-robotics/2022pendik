@@ -2,7 +2,7 @@ import magicbot
 import wpilib
 import wpilib.drive
 
-class DriveTrain:
+class DriveTrain():
     drive_fLeft: wpilib.PWMVictorSPX
     drive_rLeft: wpilib.PWMVictorSPX
     drive_fRight: wpilib.PWMVictorSPX
