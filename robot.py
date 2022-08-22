@@ -45,8 +45,8 @@ class MyRobot(magicbot.MagicRobot):
         # self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
         # self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
-        # self.shooter_encoder = wpilib.Encoder(7, 8, encodingType=wpilib.Encoder.EncodingType.k4X)
-        # self.shooter_encoder.setDistancePerPulse(1 / 1024) #Bununla robotu surmedigimiz icin .getRate kac devir dondugunu alsin direk
+        self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.shooter_encoder.setDistancePerPulse(1 / 1024) #Bununla robotu surmedigimiz icin .getRate kac devir dondugunu alsin direk
 
         self.gyro = wpilib.ADIS16448_IMU()
         self.gyro.calibrate()
@@ -60,8 +60,8 @@ class MyRobot(magicbot.MagicRobot):
         self.climb_low = ctre.WPI_VictorSPX(4)
         self.climb_up = ctre.WPI_VictorSPX(5)
 
-        self.switch_upper = wpilib.DigitalInput(1)
-        self.switch_lower = wpilib.DigitalInput(2)
+        self.switch_upper = wpilib.DigitalInput(9)
+        self.switch_lower = wpilib.DigitalInput(4)
 
         self.shooter_front1 = ctre.WPI_VictorSPX(10)
         self.shooter_front2 = ctre.WPI_VictorSPX(8)
@@ -102,7 +102,8 @@ class MyRobot(magicbot.MagicRobot):
         self.intake.intake_begin()
         self.shooter.shooter_begin()
         self.climb.execute()
-        print(self.gyro.getAngle())
+        print("aci",self.gyro.getAngle())
+        print("encoder", self.shooter_encoder.getDistance())
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)
