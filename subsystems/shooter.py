@@ -7,18 +7,16 @@ class ShooterEnabler:
     shooter_front1: ctre.VictorSPX
     shooter_front2: ctre.VictorSPX
     shooter_rear: ctre.VictorSPX
-    
     def shooter_shoot(self):
-        #PID Kontrolu gibi seyleri buraya yap
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, 1)
-        self.shooter_front2.set(ctre.ControlMode.PercentOutput, 1)
-        self.shooter_rear.set(ctre.ControlMode.PercentOutput, 1)
-
+        front = sd.getNumber("shooter_valueFront", 0.5)
+        rear = sd.getNumber("shooter_valueRear", 0.5)
+        self.shooter_front1.set(ctre.ControlMode.PercentOutput, -front)
+        self.shooter_front2.set(ctre.ControlMode.PercentOutput, front)
+        self.shooter_rear.set(ctre.ControlMode.PercentOutput, -rear)
     def shooter_stop(self):
         self.shooter_front1.set(ctre.ControlMode.PercentOutput, 0)
         self.shooter_front2.set(ctre.ControlMode.PercentOutput, 0)
         self.shooter_rear.set(ctre.ControlMode.PercentOutput, 0)
-
     def execute(self):
         pass
 
@@ -42,7 +40,7 @@ class Shooter:
     def shooter_begin(self):
         if sd.getBoolean("shooterRunning", False):
             if sd.getNumber("ballCount", 1) >= 1 and not sd.getBoolean("intakeRunning", False):
-                if self.switch_upper.get() and not self.ballInPlace:
+                if (self.switch_upper.get() == False) and (not self.ballInPlace):
                     sd.putString("shooterState","Top yerinde")
                     self.ballInPlace = True
 
