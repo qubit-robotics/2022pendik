@@ -20,15 +20,15 @@ class MyRobot(magicbot.MagicRobot):
     shooter: Shooter
     shooter_manual: ShooterEnabler
     intake: Intake
-    camera: Camera
+    # camera: Camera
     climb: Climb
-    aimbot: AimBot
-    ramsete: RamseteComponent
+    # aimbot: AimBot
+    # ramsete: RamseteComponent
     button_ctrl: ButtonCtrl
 
     def createObjects(self):
         '''Create motors and stuff here'''
-        self.cam = photonvision.PhotonCamera("camera1")
+        # self.cam = photonvision.PhotonCamera("camera1")
 
         self.drive_fLeft = wpilib.PWMVictorSPX(0)
         self.drive_rLeft = wpilib.PWMVictorSPX(1)
@@ -40,15 +40,15 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_fRight.setSafetyEnabled(0)
         self.drive_rRight.setSafetyEnabled(0)
 
-        self.drive_FrontLeftEncoder = wpilib.Encoder(3,4, encodingType=wpilib.Encoder.EncodingType.k4X)
-        self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
-        self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
-        self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        # self.drive_FrontLeftEncoder = wpilib.Encoder(3,4, encodingType=wpilib.Encoder.EncodingType.k4X)
+        # self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
+        # self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        # self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
-        self.shooter_encoder = wpilib.Encoder(7, 8, encodingType=wpilib.Encoder.EncodingType.k4X)
-        self.shooter_encoder.setDistancePerPulse(1 / 1024) #Bununla robotu surmedigimiz icin .getRate kac devir dondugunu alsin direk
+        # self.shooter_encoder = wpilib.Encoder(7, 8, encodingType=wpilib.Encoder.EncodingType.k4X)
+        # self.shooter_encoder.setDistancePerPulse(1 / 1024) #Bununla robotu surmedigimiz icin .getRate kac devir dondugunu alsin direk
 
-        self.gyro = wpilib.ADXRS450_Gyro()
+        self.gyro = wpilib.ADIS16448_IMU()
         self.gyro.calibrate()
 
         self.gamepad = wpilib.Joystick(0)
@@ -80,9 +80,9 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
 
-    def robotPeriodic(self):
-        self.camera.get_distance()
-        self.camera.get_yaw()
+    # def robotPeriodic(self):
+    #     self.camera.get_distance()
+    #     self.camera.get_yaw()
 
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
@@ -102,6 +102,7 @@ class MyRobot(magicbot.MagicRobot):
         self.intake.intake_begin()
         self.shooter.shooter_begin()
         self.climb.execute()
+        print(self.gyro.getAngle())
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)
