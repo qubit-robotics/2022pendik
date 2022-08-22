@@ -7,14 +7,19 @@ from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
 from subsystems.climb import Climb
-from components.path import RamseteComponent
-from components.aimbot import AimBot
-from components.buttons import ButtonCtrl
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
 
 class MyRobot(magicbot.MagicRobot):
+
+    shooter_speedChange_value = 0
+    shooter_speedChanged = False
+
+    shooterMode = {0: "Lower Hub Dipdibe",
+                   1: "Lower Hub",
+                   2: "Upper Hub",
+                   3: "Upper Hub 2 Metre"}
 
     drivetrain: DriveTrain
     shooter: Shooter
@@ -24,12 +29,82 @@ class MyRobot(magicbot.MagicRobot):
     climb: Climb
     # aimbot: AimBot
     # ramsete: RamseteComponent
-    button_ctrl: ButtonCtrl
+
+    def shooter_speed_configuration(self):
+
+        if self.shooter_speedChange_value == 0:
+             sd.putNumber("shooter_valueFront", 0.5)
+             sd.putNumber("shooter_valueRear", 0.5)
+            
+        if self.shooter_speedChange_value == 1:
+             sd.putNumber("shooter_valueFront", 1)
+             sd.putNumber("shooter_valueRear", 0.5)
+        
+        if self.shooter_speedChange_value == 2:
+             sd.putNumber("shooter_valueFront", 0.5)
+             sd.putNumber("shooter_valueRear", 1)
+        
+        if self.shooter_speedChange_value == 3:
+            sd.putNumber("shooter_valueFront", 1)
+            sd.putNumber("shooter_valueRear", 1)
+
+        if self.shooter_speedChanged:
+            self.shooter_speedChanged = False
+
+            for i in self.shooterMode:
+                _state = (i == self.shooter_speedChange_value)
+                # sd.putBoolean(self.shooterMode.get(i), _state)
+            
+    def climb_control(self):
+        self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
+        self.climbMotor1_UpInput = self.flightStick.getRawButton(5)
+        self.climbMotor2_LowInput = self.flightStick.getRawButton(6)
+        self.climbMotor2_UpInput = self.flightStick.getRawButton(7)
+        
+        # if self.climbMotor1_LowInput:
+        #     print("sa")
+        #     self.climb_low.set(ctre.ControlMode.PercentOutput, 0)
+        # elif self.climbMotor1_UpInput:
+        #     sd.putNumber("climbMotor1",1)
+        # else:
+        #     print("jfkenedy")
+        #     self.climb_low.set(ctre.ControlMode.PercentOutput, 1)
+        # if self.climbMotor2_LowInput:
+        #     sd.putNumber("climbMotor2",-1)
+        # elif self.climbMotor2_UpInput:
+        #     sd.putNumber("climbMotor2",1)
+        # else:
+        #     sd.putNumber("climbMotor2",0)
+
+    def intake_shooter_control(self):
+        self.intake_driverInput = self.flightStick.getRawButton(2)        
+        self.shooter_driverInput = self.flightStick.getRawButton(1)
+        self.shooter_changeSpeed_Input = self.flightStick.getRawButtonPressed(3)
+
+        if self.intake_driverInput:
+            # print("intake tusa basti!")
+            sd.putString("shooterState","Inactive")
+            sd.putBoolean("intakeRunning", True)
+            sd.putBoolean("shooterRunning", False)
+        if self.shooter_driverInput:
+            print("shooter tusa basti!")
+            sd.putString("IntakeState","Inactive")
+            sd.putBoolean("intakeRunning", False)
+            sd.putBoolean("shooterRunning", True)
+        if self.shooter_changeSpeed_Input:
+            if self.shooter_speedChange_value < 3:
+                self.shooter_speedChange_value += 1
+            else:
+                self.shooter_speedChange_value = 0
+            self.shooter_speedChanged = True
+
+        self.shooter.shooter_begin()
+        self.intake.intake_begin()
 
     def createObjects(self):
         '''Create motors and stuff here'''
-        # self.cam = photonvision.PhotonCamera("camera1")
-
+        self.cam = photonvision.PhotonCamera("camera1")
+        self.intakespeed = 0.8
         self.drive_fLeft = wpilib.PWMVictorSPX(0)
         self.drive_rLeft = wpilib.PWMVictorSPX(1)
         self.drive_fRight = wpilib.PWMVictorSPX(2)
@@ -45,7 +120,7 @@ class MyRobot(magicbot.MagicRobot):
         # self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
         # self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
-        self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
         self.shooter_encoder.setDistancePerPulse(1 / 1024) #Bununla robotu surmedigimiz icin .getRate kac devir dondugunu alsin direk
 
         self.gyro = wpilib.ADIS16448_IMU()
@@ -54,8 +129,8 @@ class MyRobot(magicbot.MagicRobot):
         self.gamepad = wpilib.Joystick(0)
         self.flightStick = wpilib.Joystick(1)
 
-        self.belt_lower = ctre.WPI_VictorSPX(1)
-        self.belt_upper = ctre.WPI_VictorSPX(2)
+        self.belt_lower = ctre.WPI_VictorSPX(7)
+        self.belt_upper = ctre.WPI_VictorSPX(6)
 
         self.climb_low = ctre.WPI_VictorSPX(4)
         self.climb_up = ctre.WPI_VictorSPX(5)
@@ -71,7 +146,7 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter_timer = wpilib.Timer()
         self.cooldown_timer = wpilib.Timer() # intake ve shooter komutlarina cooldown ekleyecegiz, karisiklik riski az olacak.
 
-        sd.putNumber("ballCount", 1)
+        sd.putNumber("ballCount", 0)
         sd.putBoolean("intakeRunning", False)
         sd.putBoolean("shooterRunning", False)
         sd.putNumber("shooter_valueFront", 0.5)
@@ -79,6 +154,22 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
+
+    def atis_kontrol(self):
+        # range = sd.getNumber("hubDistance", 0)
+        tolerance = 0.2
+        if self.shooter_speedChange_value == 0:
+            goal = 0.5
+        elif self.shooter_speedChange_value == 1:
+            goal = 1
+        elif self.shooter_speedChange_value == 2:
+            goal = 3
+        elif self.shooter_speedChange_value == 3:
+            goal = 2
+        # if ((range-tolerance) < goal) and ((range+tolerance) > goal):
+        #     sd.putBoolean("atis_Kontrol",True)
+        # else:
+        #     sd.putBoolean("atis_Kontrol",False)
 
     # def robotPeriodic(self):
     #     self.camera.get_distance()
@@ -98,12 +189,13 @@ class MyRobot(magicbot.MagicRobot):
         except:
             self.onException()
         
-        self.button_ctrl.execute()
-        self.intake.intake_begin()
-        self.shooter.shooter_begin()
-        self.climb.execute()
-        print("aci",self.gyro.getAngle())
-        print("encoder", self.shooter_encoder.getDistance())
+        self.intake_shooter_control()
+        self.shooter_speed_configuration()
+        self.climb.set_climbMotorSpeed()
+        self.atis_kontrol()
+        self.climb_control()
+        print(self.shooter_encoder.getRate())
+        print(self.gyro.getAngle())
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)
