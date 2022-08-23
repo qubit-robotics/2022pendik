@@ -1,5 +1,8 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="PIDController[1]" type="PIDController" class="edu.wpi.first.smartdashboard.gui.elements.PIDEditor">
+		<location x="650" y="26"/>
+	</widget>
 	<widget field="hubYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="295" y="261"/>
 		<width>144</width>
@@ -97,8 +100,97 @@
 		<width>138</width>
 		<height>53</height>
 	</widget>
+	<widget field="atis_Kontrol" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="88"/>
+	</widget>
+	<widget field="climbMotor2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="66"/>
+	</widget>
+	<widget field="climbMotor1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="44"/>
+	</widget>
 </dashboard>
 <live-window>
+	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<widget field="DigitalInput[0]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="19"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[6]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="40"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[8]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="61"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="Encoder[5]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="5" y="82"/>
+			<height>104</height>
+			<width>308</width>
+		</widget>
+		<widget field="PWMVictorSPX[2]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="186"/>
+			<height>41</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[5]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="227"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[7]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="248"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="PWMVictorSPX[3]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="269"/>
+			<height>41</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[4]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="310"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="Encoder[0]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="5" y="331"/>
+			<height>104</height>
+			<width>308</width>
+		</widget>
+		<widget field="PWMVictorSPX[0]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="435"/>
+			<height>41</height>
+			<width>308</width>
+		</widget>
+		<widget field="Encoder[8]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="5" y="476"/>
+			<height>104</height>
+			<width>308</width>
+		</widget>
+		<widget field="PWMVictorSPX[1]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="580"/>
+			<height>41</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[1]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="621"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="642"/>
+			<height>21</height>
+			<width>308</width>
+		</widget>
+		<location x="0" y="0"/>
+		<width>318</width>
+		<height>668</height>
+	</widget>
 </live-window>
 	<hidden field="Field"/>
 	<hidden field="Model"/>

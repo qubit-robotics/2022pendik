@@ -32,8 +32,15 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Ungrouped/AnalogGyro[0]": "Gyro",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[2]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[4]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[5]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[6]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[8]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[9]": "Digital Input",
       "/LiveWindow/Ungrouped/MecanumDrive[1]": "MecanumDrive",
       "/LiveWindow/Ungrouped/PWMVictorSPX[0]": "Motor Controller",
       "/LiveWindow/Ungrouped/PWMVictorSPX[1]": "Motor Controller",
@@ -41,11 +48,11 @@
       "/LiveWindow/Ungrouped/PWMVictorSPX[3]": "Motor Controller",
       "/SmartDashboard/Autonomous Mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/Model": "Mechanism2d"
+      "/SmartDashboard/Model": "Mechanism2d",
+      "/SmartDashboard/PIDController[1]": "PIDController"
     },
     "windows": {
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\Berke\\Documents\\python-qubit-simulation\\6367\\2022-robot-main\\robot\\2022-field.png",
         "window": {
           "visible": true
         }

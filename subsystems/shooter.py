@@ -2,17 +2,35 @@ import wpilib
 import ctre
 import magicbot
 from wpilib import SmartDashboard as sd
+from wpimath.controller import PIDController
 
 class ShooterEnabler:
-    shooter_front1: ctre.VictorSPX
-    shooter_front2: ctre.VictorSPX
-    shooter_rear: ctre.VictorSPX
+    shooter_front1: ctre.WPI_VictorSPX
+    shooter_front2: ctre.WPI_VictorSPX
+    shooter_rear: ctre.WPI_VictorSPX
+    shooter_encoder: wpilib.Encoder
+    shooter_controller: PIDController
+
+    # Arduino'daki map fonskiyonu bu
+    def _map(self, x, in_min, in_max, out_min, out_max):
+        return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
+
     def shooter_shoot(self):
         front = sd.getNumber("shooter_valueFront", 0.5)
         rear = sd.getNumber("shooter_valueRear", 0.5)
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, -front)
-        self.shooter_front2.set(ctre.ControlMode.PercentOutput, front)
+
+        front = self._map(front, 0, 1, 0, 180)
+        front_voltage = self.shooter_controller.calculate(-self.shooter_encoder.getRate(), front)
+
+        self.shooter_front1.setVoltage(front_voltage)
+        self.shooter_front2.setVoltage(front_voltage)
         self.shooter_rear.set(ctre.ControlMode.PercentOutput, -rear)
+
+        if self.shooter_controller.atSetpoint():
+            return True
+        else:
+            return False
+
     def shooter_stop(self):
         self.shooter_front1.set(ctre.ControlMode.PercentOutput, 0)
         self.shooter_front2.set(ctre.ControlMode.PercentOutput, 0)
@@ -52,10 +70,12 @@ class Shooter:
                 elif self.ballInPlace:
                     sd.putString("shooterState","Top yerinde, atısa baslaniyor...")
                     self.shooter_timer.start()
-                    self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
                     if not self.shooter_timer.hasPeriodPassed(3):
                         sd.putString("shooterState","Atisa baslandi!")
-                        self.shooter_manual.shooter_shoot()
+                        rpmAdequate = self.shooter_manual.shooter_shoot()
+                        if rpmAdequate:
+                            print("ust belt calisiyor")
+                            self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
 
                     else:
                         sd.putString("shooterState","Atis Bitti.")

@@ -7,6 +7,7 @@ from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
 from subsystems.climb import Climb
+from components.path import RamseteComponent
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -28,7 +29,7 @@ class MyRobot(magicbot.MagicRobot):
     # camera: Camera
     climb: Climb
     # aimbot: AimBot
-    # ramsete: RamseteComponent
+    ramsete: RamseteComponent
 
     def shooter_speed_configuration(self):
 
@@ -53,7 +54,7 @@ class MyRobot(magicbot.MagicRobot):
 
             for i in self.shooterMode:
                 _state = (i == self.shooter_speedChange_value)
-                # sd.putBoolean(self.shooterMode.get(i), _state)
+                sd.putBoolean(self.shooterMode.get(i), _state)
             
     def climb_control(self):
         self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
@@ -115,10 +116,10 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_fRight.setSafetyEnabled(0)
         self.drive_rRight.setSafetyEnabled(0)
 
-        # self.drive_FrontLeftEncoder = wpilib.Encoder(3,4, encodingType=wpilib.Encoder.EncodingType.k4X)
-        # self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
-        # self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
-        # self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        self.drive_FrontLeftEncoder = wpilib.Encoder(0,1, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
+        self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
         self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
         self.shooter_encoder.setDistancePerPulse(1 / 1024) #Bununla robotu surmedigimiz icin .getRate kac devir dondugunu alsin direk
@@ -141,6 +142,15 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter_front1 = ctre.WPI_VictorSPX(10)
         self.shooter_front2 = ctre.WPI_VictorSPX(8)
         self.shooter_rear = ctre.WPI_VictorSPX(9)
+        self.shooter_front1.setInverted(1)
+        self.shooter_rear.setInverted(1)
+        
+        self.shooter_controller = PIDController(
+            5,
+            0,
+            0
+        )
+        self.shooter_controller.setSetpoint(10)
 
         self.intake_timer = wpilib.Timer()
         self.shooter_timer = wpilib.Timer()
@@ -154,6 +164,7 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
+        sd.putData(self.shooter_controller)
 
     def atis_kontrol(self):
         # range = sd.getNumber("hubDistance", 0)
@@ -191,11 +202,11 @@ class MyRobot(magicbot.MagicRobot):
         
         self.intake_shooter_control()
         self.shooter_speed_configuration()
-        self.climb.set_climbMotorSpeed()
+        # self.climb.set_climbMotorSpeed()
         self.atis_kontrol()
         self.climb_control()
         print(self.shooter_encoder.getRate())
-        print(self.gyro.getAngle())
+            
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)
