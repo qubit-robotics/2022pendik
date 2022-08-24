@@ -150,7 +150,7 @@ class MyRobot(magicbot.MagicRobot):
             0,
             0
         )
-        self.shooter_controller.setTolerance(0.000000001)
+        self.shooter_controller.setTolerance(10)
 
         self.intake_timer = wpilib.Timer()
         self.shooter_timer = wpilib.Timer()
