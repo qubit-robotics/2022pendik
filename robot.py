@@ -150,7 +150,7 @@ class MyRobot(magicbot.MagicRobot):
             0,
             0
         )
-        self.shooter_controller.setSetpoint(10)
+        self.shooter_controller.setTolerance(0.000000001)
 
         self.intake_timer = wpilib.Timer()
         self.shooter_timer = wpilib.Timer()
@@ -205,7 +205,7 @@ class MyRobot(magicbot.MagicRobot):
         # self.climb.set_climbMotorSpeed()
         self.atis_kontrol()
         self.climb_control()
-        print(self.shooter_encoder.getRate())
+        sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
             
 
 if __name__ == '__main__':

@@ -20,11 +20,11 @@ class ShooterEnabler:
         rear = sd.getNumber("shooter_valueRear", 0.5)
 
         front = self._map(front, 0, 1, 0, 180)
-        front_voltage = self.shooter_controller.calculate(-self.shooter_encoder.getRate(), front)
+        front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), front)
 
         self.shooter_front1.setVoltage(front_voltage)
         self.shooter_front2.setVoltage(front_voltage)
-        self.shooter_rear.set(ctre.ControlMode.PercentOutput, -rear)
+        self.shooter_rear.set(ctre.ControlMode.PercentOutput, rear)
 
         if self.shooter_controller.atSetpoint():
             return True
@@ -54,11 +54,12 @@ class Shooter:
     shooter_manual: ShooterEnabler
 
     ballInPlace = False
+    force_shoot= False
 
     def shooter_begin(self):
         if sd.getBoolean("shooterRunning", False):
             if sd.getNumber("ballCount", 1) >= 1 and not sd.getBoolean("intakeRunning", False):
-                if (self.switch_upper.get() == False) and (not self.ballInPlace):
+                if (self.switch_upper.get()) and (not self.ballInPlace):
                     sd.putString("shooterState","Top yerinde")
                     self.ballInPlace = True
 
@@ -68,23 +69,29 @@ class Shooter:
                     sd.putBoolean("shooterRunning", True)
 
                 elif self.ballInPlace:
-                    sd.putString("shooterState","Top yerinde, atısa baslaniyor...")
+                    sd.putString("shooterState","Top yerinde, atisa baslaniyor...")
                     self.shooter_timer.start()
-                    if not self.shooter_timer.hasPeriodPassed(3):
-                        sd.putString("shooterState","Atisa baslandi!")
-                        rpmAdequate = self.shooter_manual.shooter_shoot()
-                        if rpmAdequate:
-                            print("ust belt calisiyor")
-                            self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
+                    sd.putString("shooterState","Atisa baslandi!")
+                    rpmAdequate = self.shooter_manual.shooter_shoot()
+                    if rpmAdequate and self.switch_upper.get():
+                        print("ust belt calisiyor")
+                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
 
-                    else:
+                    elif (not rpmAdequate) and (self.shooter_timer.hasPeriodPassed(5)):
+                        print("encoder_hizi = ",rpmAdequate)
+                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
+                        self.force_shoot = True
+
+                    elif self.force_shoot:
                         sd.putString("shooterState","Atis Bitti.")
                         self.shooter_timer.stop()
                         self.shooter_timer.reset()
                         self.shooter_manual.shooter_stop()
+                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
                         sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
                         sd.putBoolean("shooterRunning", False)
                         self.ballInPlace = False
+                        self.force_shoot = False
 
             else:
                 sd.putString("shooterState","Hic Topun Yok!")
