@@ -7,7 +7,7 @@ from wpimath.trajectory import TrajectoryGenerator, TrajectoryUtil
 
 class TDemo(magicbot.AutonomousStateMachine):
 
-    ramsete: RamseteComponent
+    # ramsete: RamseteComponent
 
     MODE_NAME = "TDemo"
     DEFAULT = True

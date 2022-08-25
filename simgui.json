@@ -26,6 +26,14 @@
       "window": {
         "visible": true
       }
+    },
+    "RoboRIO": {
+      "5V Rail": {
+        "open": true
+      },
+      "window": {
+        "visible": true
+      }
     }
   },
   "NTProvider": {

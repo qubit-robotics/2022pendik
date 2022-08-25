@@ -29,7 +29,7 @@ class MyRobot(magicbot.MagicRobot):
     # camera: Camera
     climb: Climb
     # aimbot: AimBot
-    ramsete: RamseteComponent
+    # ramsete: RamseteComponent
 
     def shooter_speed_configuration(self):
 
