@@ -67,7 +67,7 @@ class PhysicsEngine:
         self.flywheelSim = wpilib.simulation.FlywheelSim(
             DCMotor.RS775_125(2),
             3.25,
-            0.1,
+            0.0043895948,
         )
 
         self.shooter_motor_collection = robot.shooter_front1.getSimCollection()
@@ -175,6 +175,6 @@ class PhysicsEngine:
             self.shooter_motor_collection.getMotorOutputLeadVoltage()
         )
         self.shooter_encoder.setRate(
-            self.flywheelSim.getAngularVelocity() * 3.25
+            self.flywheelSim.getAngularVelocity() * 0.03
         )
 

@@ -19,7 +19,7 @@ class ShooterEnabler:
         front = sd.getNumber("shooter_valueFront", 0.5)
         rear = sd.getNumber("shooter_valueRear", 0.5)
 
-        front = self._map(front, 0, 1, 0, 180)
+        front = self._map(front, 0, 1, 0, 6.15)
         front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), front)
 
         self.shooter_front1.setVoltage(front_voltage)
