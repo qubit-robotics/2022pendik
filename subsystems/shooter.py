@@ -19,14 +19,15 @@ class ShooterEnabler:
         front = sd.getNumber("shooter_valueFront", 0.5)
         rear = sd.getNumber("shooter_valueRear", 0.5)
 
-        front = self._map(front, 0, 1, 0, 6.15)
-        front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), front)
+        front = self._map(front, 0, 1, 0, 6)
+        front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), 5)
 
         self.shooter_front1.setVoltage(front_voltage)
         self.shooter_front2.setVoltage(front_voltage)
         self.shooter_rear.set(ctre.ControlMode.PercentOutput, rear)
 
         if self.shooter_controller.atSetpoint():
+            print("setpointte")
             return True
         else:
             return False
@@ -73,16 +74,16 @@ class Shooter:
                     self.shooter_timer.start()
                     sd.putString("shooterState","Atisa baslandi!")
                     rpmAdequate = self.shooter_manual.shooter_shoot()
-                    if rpmAdequate and self.switch_upper.get():
+                    if rpmAdequate:
                         print("ust belt calisiyor")
                         self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
 
-                    elif (not rpmAdequate) and (self.shooter_timer.hasPeriodPassed(5)):
+                    elif (not rpmAdequate):
                         print("encoder_hizi = ",rpmAdequate)
-                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
+                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
                         self.force_shoot = True
 
-                    elif self.force_shoot:
+                    else:
                         sd.putString("shooterState","Atis Bitti.")
                         self.shooter_timer.stop()
                         self.shooter_timer.reset()

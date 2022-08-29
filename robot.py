@@ -122,7 +122,7 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
         self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
-        self.shooter_encoder.setDistancePerPulse(0.15 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
+        self.shooter_encoder.setDistancePerPulse(0.03 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
 
         self.gyro = wpilib.ADIS16448_IMU()
         self.gyro.calibrate()
@@ -136,7 +136,7 @@ class MyRobot(magicbot.MagicRobot):
         self.climb_low = ctre.WPI_VictorSPX(4)
         self.climb_up = ctre.WPI_VictorSPX(5)
 
-        self.switch_upper = wpilib.DigitalInput(9)
+        self.switch_upper = wpilib.DigitalInput(3)
         self.switch_lower = wpilib.DigitalInput(4)
 
         self.shooter_front1 = ctre.WPI_VictorSPX(10)
@@ -146,11 +146,11 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter_rear.setInverted(1)
         
         self.shooter_controller = PIDController(
-            5,
+            15,
             0,
             0
         )
-        self.shooter_controller.setTolerance(10)
+        self.shooter_controller.setTolerance(0.1)
 
         self.intake_timer = wpilib.Timer()
         self.shooter_timer = wpilib.Timer()
@@ -159,8 +159,8 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("ballCount", 0)
         sd.putBoolean("intakeRunning", False)
         sd.putBoolean("shooterRunning", False)
-        sd.putNumber("shooter_valueFront", 0.5)
-        sd.putNumber("shooter_valueRear", 0.5)
+        sd.putNumber("shooter_valueFront", 1)
+        sd.putNumber("shooter_valueRear", 1)
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
@@ -205,12 +205,7 @@ class MyRobot(magicbot.MagicRobot):
         # self.climb.set_climbMotorSpeed()
         self.atis_kontrol()
         self.climb_control()
-        sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
-        if self.flightStick.getRawButton(4):
-            self.shooter_front1.setVoltage(12)
-            self.shooter_front2.setVoltage(12)
-        elif not self.flightStick.getRawButton(4):
-            self.shooter_manual.shooter_stop()
+        print("shooter_encoder",self.shooter_encoder.getRate())
             
 
 if __name__ == '__main__':

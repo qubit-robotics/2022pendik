@@ -20,7 +20,6 @@ class Intake:
                 return self.intake_secondBall()
             else:
                 sd.putString("IntakeState","2 ADET TOPUN VAR!!!")
-                sd.putBoolean("intakeRunning", False)
 
     def intake_firstBall(self):
         print('intakefirstball')
@@ -32,8 +31,8 @@ class Intake:
             sd.putBoolean("intakeRunning", False)
             sd.putString("IntakeState","1. Top yerinde!")
         else:
-            self.belt_lower.set(ctre.ControlMode.PercentOutput, -0.8)
-            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.6)
+            self.belt_lower.set(ctre.ControlMode.PercentOutput, -1)
+            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.4)
             sd.putBoolean("intakeRunning", True)
             sd.putString("IntakeState","1. Top yerine geliyor...")
     
@@ -45,11 +44,11 @@ class Intake:
             self.belt_lower.set(ctre.ControlMode.PercentOutput, -0.6)
             sd.putBoolean("intakeRunning", True)
             sd.putString("IntakeState","2. Top yerine geliyor...")
-        if self.switch_lower.get():
-            self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
-            sd.putBoolean("intakeRunning", False)
-            sd.putNumber("ballCount", 2)
-            sd.putString("IntakeState","2. Top yerinde!")
+            if self.switch_lower.get():
+                self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
+                sd.putBoolean("intakeRunning", False)
+                sd.putNumber("ballCount", 2)
+                sd.putString("IntakeState","2. Top yerinde!")
         else:
             self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
             self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
