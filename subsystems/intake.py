@@ -54,7 +54,3 @@ class Intake:
             self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
     def execute(self):
         pass
-
-
-
-
