@@ -32,7 +32,7 @@ class Intake:
             sd.putString("IntakeState","1. Top yerinde!")
         else:
             self.belt_lower.set(ctre.ControlMode.PercentOutput, -1)
-            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.4)
+            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.3)
             sd.putBoolean("intakeRunning", True)
             sd.putString("IntakeState","1. Top yerine geliyor...")
     

@@ -146,7 +146,7 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter_rear.setInverted(1)
         
         self.shooter_controller = PIDController(
-            15,
+            7,
             0,
             0
         )
@@ -159,8 +159,8 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("ballCount", 0)
         sd.putBoolean("intakeRunning", False)
         sd.putBoolean("shooterRunning", False)
-        sd.putNumber("shooter_valueFront", 1)
-        sd.putNumber("shooter_valueRear", 1)
+        sd.putNumber("shooter_valueFront", 3)
+        sd.putNumber("shooter_valueRear", 0.5)
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
@@ -205,7 +205,11 @@ class MyRobot(magicbot.MagicRobot):
         # self.climb.set_climbMotorSpeed()
         self.atis_kontrol()
         self.climb_control()
-        print("shooter_encoder",self.shooter_encoder.getRate())
+        sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
+        if self.flightStick.getRawButton(4):
+            self.shooter_manual.shooter_shoot()
+        elif not self.flightStick.getRawButton(4):
+            self.shooter_manual.shooter_stop()
             
 
 if __name__ == '__main__':

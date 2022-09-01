@@ -16,11 +16,10 @@ class ShooterEnabler:
         return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
 
     def shooter_shoot(self):
-        front = sd.getNumber("shooter_valueFront", 0.5)
+        front = 3
         rear = sd.getNumber("shooter_valueRear", 0.5)
 
-        front = self._map(front, 0, 1, 0, 6)
-        front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), 5)
+        front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), front)
 
         self.shooter_front1.setVoltage(front_voltage)
         self.shooter_front2.setVoltage(front_voltage)
