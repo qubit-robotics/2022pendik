@@ -7,6 +7,7 @@ from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter, ShooterEnabler
 from subsystems.climb import Climb
+from subsystems.limit_switch_analog import LimitSwitch_AnalogInput
 from components.path import RamseteComponent
 import photonvision
 import ctre
@@ -136,7 +137,7 @@ class MyRobot(magicbot.MagicRobot):
         self.climb_low = ctre.WPI_VictorSPX(4)
         self.climb_up = ctre.WPI_VictorSPX(5)
 
-        self.switch_upper = wpilib.DigitalInput(3)
+        self.switch_upper = LimitSwitch_AnalogInput(0)
         self.switch_lower = wpilib.DigitalInput(4)
 
         self.shooter_front1 = ctre.WPI_VictorSPX(10)
