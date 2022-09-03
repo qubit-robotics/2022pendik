@@ -27,10 +27,12 @@ class Shooter:
 
     flightStick: wpilib.Joystick
 
-    shooterMode = {0: "Lower Hub Dipdibe",
-                    1: "Lower Hub",
-                    2: "Upper Hub",
-                    3: "Upper Hub 2 Metre"}
+    shooterMode = {
+        0: "Lower Hub Dipdibe",
+        1: "Lower Hub",
+        2: "Upper Hub",
+        3: "Upper Hub 2 Metre"
+    }
 
     shooter_speedChange_value = 0
     shooter_speedChanged = False
@@ -46,6 +48,10 @@ class Shooter:
         )
         self.shooter_controller.setTolerance(0.1)
         sd.putData(self.shooter_controller)
+        
+        for i in self.shooterMode:
+            _state = (i == self.shooter_speedChange_value)
+            sd.putBoolean(self.shooterMode.get(i), _state)
 
 
     def shooter_begin(self):
