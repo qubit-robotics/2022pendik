@@ -7,7 +7,6 @@ from subsystems.drivetrain import DriveTrain
 from subsystems.intake import Intake
 from subsystems.shooter import Shooter
 from subsystems.climb import Climb
-from subsystems.limit_switch_analog import LimitSwitch_AnalogInput
 from components.path import RamseteComponent
 import photonvision
 import ctre
@@ -157,7 +156,6 @@ class MyRobot(magicbot.MagicRobot):
         # self.climb.set_climbMotorSpeed()
         self.atis_kontrol()
         self.climb_control()
-        sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
         if self.flightStick.getRawButton(4):
             self.shooter.shooter_ramp_up()
         elif not self.flightStick.getRawButton(4):

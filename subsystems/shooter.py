@@ -38,7 +38,7 @@ class Shooter:
     shooter_speedChanged = False
 
     front_setpoint = 3
-    rear_setpoint = 3
+    rear_setpoint = 1
 
     def setup(self):
         self.shooter_controller = PIDController(
