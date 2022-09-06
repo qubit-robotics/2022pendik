@@ -1,3 +1,4 @@
+from math import fabs
 import wpilib
 import ctre
 import magicbot
@@ -42,7 +43,7 @@ class Shooter:
 
     def setup(self):
         self.shooter_controller = PIDController(
-            7,
+            5,
             0,
             0
         )
@@ -69,28 +70,32 @@ class Shooter:
 
                 elif self.ballInPlace:
                     sd.putString("shooterState","Top yerinde, atisa baslaniyor...")
-                    self.shooter_timer.start()
                     sd.putString("shooterState","Atisa baslandi!")
-                    rpmAdequate = self.shooter_ramp_up()
-                    if rpmAdequate:
+                    self.shooter_ramp_up()
+
+                    if self.shooter_encoder.getDistance() > self.front_setpoint:
+                        print("setpointte")
+                        force = True
+                    else:
+                        force = False
+
+                    if (not self.switch_upper.get()):
+                        sd.putString("shooterState","Atis Bitti.")
+                        self.shooter_timer.start()
+                        if self.shooter_timer.get() > 2:
+                            self.shooter_timer.stop()
+                            self.shooter_timer.reset()
+                            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
+                            sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
+                            sd.putBoolean("shooterRunning", False)
+                            self.shooter_stop()
+                            self.shooter_encoder.reset()
+                            self.ballInPlace = False
+                            force = False
+
+                    elif force:
                         print("ust belt calisiyor")
                         self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
-
-                    elif (not rpmAdequate):
-                        print("encoder_hizi = ",rpmAdequate)
-                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
-                        self.force_shoot = True
-
-                    else:
-                        sd.putString("shooterState","Atis Bitti.")
-                        self.shooter_timer.stop()
-                        self.shooter_timer.reset()
-                        self.shooter_stop()
-                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
-                        sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
-                        sd.putBoolean("shooterRunning", False)
-                        self.ballInPlace = False
-                        self.force_shoot = False
 
             else:
                 sd.putString("shooterState","Hic Topun Yok!")
@@ -107,19 +112,19 @@ class Shooter:
             self.shooter_speedChanged = True
 
         if self.shooter_speedChange_value == 0:
-            self.front_setpoint = 3
+            self.front_setpoint = 15
             self.rear_setpoint = 0.5            
 
         elif self.shooter_speedChange_value == 1:
-            self.front_setpoint = 6
+            self.front_setpoint = 30
             self.rear_setpoint = 0.5
 
         elif self.shooter_speedChange_value == 2:
-            self.front_setpoint = 3
+            self.front_setpoint = 15
             self.rear_setpoint = 1
         
         elif self.shooter_speedChange_value == 3:
-            self.front_setpoint = 6
+            self.front_setpoint = 30
             self.rear_setpoint = 1
 
         if self.shooter_speedChanged:
@@ -132,18 +137,12 @@ class Shooter:
 
     def shooter_ramp_up(self):
 
-        front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
+        # front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
+        # print(front_voltage)
 
-        self.shooter_front1.setVoltage(front_voltage)
-        self.shooter_front2.setVoltage(front_voltage)
+        self.shooter_front1.set(ctre.ControlMode.PercentOutput, 1)
+        self.shooter_front2.set(ctre.ControlMode.PercentOutput, 1)
         self.shooter_rear.set(ctre.ControlMode.PercentOutput, self.rear_setpoint)
-
-        if self.shooter_controller.atSetpoint():
-            print("setpointte")
-            return True
-        else:
-            return False
-
 
     def shooter_stop(self):
 
@@ -153,4 +152,4 @@ class Shooter:
     
 
     def execute(self):
-        sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
+        sd.putNumber("shooter_encoder",self.shooter_encoder.get())

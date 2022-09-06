@@ -82,7 +82,7 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
-        self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
+        self.shooter_encoder = wpilib.Encoder(9, 8, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
         self.shooter_encoder.setDistancePerPulse(0.03 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
 
         self.gyro = wpilib.ADIS16448_IMU()
@@ -145,7 +145,6 @@ class MyRobot(magicbot.MagicRobot):
         self.throttle_y_input = self.gamepad.getRawAxis(0)
         self.throttle_x_input = self.gamepad.getRawAxis(1)
         self.rotate_input = self.gamepad.getRawAxis(2)
-
         try:
             self.drivetrain.move(self.throttle_y_input, self.throttle_x_input, self.rotate_input)
 
@@ -156,10 +155,6 @@ class MyRobot(magicbot.MagicRobot):
         # self.climb.set_climbMotorSpeed()
         self.atis_kontrol()
         self.climb_control()
-        if self.flightStick.getRawButton(4):
-            self.shooter.shooter_ramp_up()
-        elif not self.flightStick.getRawButton(4):
-            self.shooter.shooter_stop()
             
 
 if __name__ == '__main__':

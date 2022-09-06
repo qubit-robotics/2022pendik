@@ -27,12 +27,12 @@ class Intake:
         if self.switch_upper.get() == True:
             self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
             self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
-            sd.putNumber("ballCount", 1)
+            print("mal")
             sd.putBoolean("intakeRunning", False)
             sd.putString("IntakeState","1. Top yerinde!")
         else:
             self.belt_lower.set(ctre.ControlMode.PercentOutput, -1)
-            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.3)
+            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.5)
             sd.putBoolean("intakeRunning", True)
             sd.putString("IntakeState","1. Top yerine geliyor...")
     
@@ -47,10 +47,14 @@ class Intake:
             if self.switch_lower.get():
                 self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
                 sd.putBoolean("intakeRunning", False)
-                sd.putNumber("ballCount", 2)
                 sd.putString("IntakeState","2. Top yerinde!")
         else:
             self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
             self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
+
     def execute(self):
-        pass
+        if (sd.getBoolean("intakeRunning",True)) and (not (sd.getBoolean("shooterRunning",False))):
+            if self.switch_upper.get() and self.switch_lower.get():
+                sd.putNumber("ballCount", 2)
+            elif self.switch_upper.get():
+                sd.putNumber("ballCount", 1)
