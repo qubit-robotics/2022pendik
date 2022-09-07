@@ -74,9 +74,6 @@
     },
     "components": {
       "open": true
-    },
-    "robot": {
-      "open": true
     }
   }
 }

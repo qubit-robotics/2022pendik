@@ -1,4 +1,6 @@
 import math
+from telnetlib import Telnet
+from time import sleep
 import magicbot
 import wpilib
 from wpimath.controller import PIDController
@@ -11,6 +13,7 @@ from components.path import RamseteComponent
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
+from networktables import NetworkTables
 
 class MyRobot(magicbot.MagicRobot):
 
@@ -116,6 +119,9 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
+
+        NetworkTables.initialize()
+        self.entry = NetworkTables.getEntry("Y")
 
     def atis_kontrol(self):
         pass
