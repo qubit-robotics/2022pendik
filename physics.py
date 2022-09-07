@@ -67,13 +67,13 @@ class PhysicsEngine:
         self.flywheelSim = wpilib.simulation.FlywheelSim(
             DCMotor.RS775_125(2),
             3.25,
-            0.1,
+            0.0043895948,
         )
 
         self.shooter_motor_collection = robot.shooter_front1.getSimCollection()
 
         # Gyro
-        self.gyro = wpilib.simulation.ADXRS450_GyroSim(robot.gyro)
+        self.gyro = wpilib.simulation.ADIS16448_IMUSim(robot.gyro)
 
         self.belt_upper_collection = robot.belt_upper.getSimCollection()
         self.belt_lower_collection = robot.belt_lower.getSimCollection()
@@ -153,7 +153,7 @@ class PhysicsEngine:
         # Update the gyro simulation
         # -> FRC gyros are positive clockwise, but the returned pose is positive
         #    counter-clockwise
-        self.gyro.setAngle(-pose.rotation().degrees())
+        self.gyro.setGyroAngleZ(-pose.rotation().degrees())
 
         self.model = wpilib.Mechanism2d(30, 30)
         wpilib.SmartDashboard.putData("Model", self.model)
@@ -175,6 +175,6 @@ class PhysicsEngine:
             self.shooter_motor_collection.getMotorOutputLeadVoltage()
         )
         self.shooter_encoder.setRate(
-            self.flywheelSim.getAngularVelocity()
+            self.flywheelSim.getAngularVelocity() * 0.03
         )
 

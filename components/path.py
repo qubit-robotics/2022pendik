@@ -1,4 +1,3 @@
-import navx
 import wpilib
 
 
@@ -20,11 +19,11 @@ class TState:
 class RamseteComponent:
 
     drivetrain: DriveTrain
-    gyro: wpilib.ADXRS450_Gyro
+    gyro: wpilib.ADIS16448_IMU
     drive_FrontLeftEncoder : wpilib.Encoder
     drive_FrontRightEncoder: wpilib.Encoder
 
-    kP = 2
+    kP = 0.5
     kI = 0
     kD = 0
 
@@ -49,7 +48,7 @@ class RamseteComponent:
 
         self._odometry = wpimath.kinematics.MecanumDriveOdometry(
             self._kinematics,
-            self.gyro.getRotation2d()
+            Rotation2d.fromDegrees(-self.gyro.getAngle())
         )
 
         self._controller = wpimath.controller.RamseteController(
@@ -95,7 +94,7 @@ class RamseteComponent:
 
         # TODO: probably shouldn't do this here.. oh well
         self._odometry.resetPosition(
-            trajectory.initialPose(), self.gyro.getRotation2d())
+            trajectory.initialPose(), Rotation2d.fromDegrees(-self.gyro.getAngle()))
 
         self.drive_FrontLeftEncoder.reset()
         self.drive_FrontRightEncoder.reset()
@@ -119,7 +118,7 @@ class RamseteComponent:
         )
 
         self._odometry.update(
-            self.gyro.getRotation2d(),
+            Rotation2d.fromDegrees(-self.gyro.getAngle()),
             currentWheelSpeeds
         )
 

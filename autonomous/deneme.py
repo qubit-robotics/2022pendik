@@ -6,7 +6,7 @@ class Deneme(magicbot.AutonomousStateMachine):
     MODE_NAME = "Hub'a yaklas"
     DEFAULT = False
 
-    aimbot: AimBot
+    # aimbot: AimBot
 
     @magicbot.state(first=True)
     def aim(self):

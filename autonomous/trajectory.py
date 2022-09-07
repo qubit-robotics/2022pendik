@@ -7,7 +7,7 @@ from wpimath.trajectory import TrajectoryGenerator, TrajectoryUtil
 
 class TDemo(magicbot.AutonomousStateMachine):
 
-    ramsete: RamseteComponent
+    # ramsete: RamseteComponent
 
     MODE_NAME = "TDemo"
     DEFAULT = True
@@ -29,15 +29,15 @@ class TDemo(magicbot.AutonomousStateMachine):
             # End at this position, three meters straight ahead of us, facing forward.
             finalPosition = Pose2d(5, 0, Rotation2d(0))
 
-            t = TrajectoryUtil.fromPathweaverJson("autonomous/output/Unnamed.wpilib.json")
+            # t = TrajectoryUtil.fromPathweaverJson("autonomous/output/Unnamed.wpilib.json")
 
             # An example trajectory to follow. All of these units are in meters.
-            # t = TrajectoryGenerator.generateTrajectory(
-            #     initialPosition,
-            #     movements,
-            #     finalPosition,
-            #     self.ramsete.tconfig,
-            # )
+            t = TrajectoryGenerator.generateTrajectory(
+                initialPosition,
+                movements,
+                finalPosition,
+                self.ramsete.tconfig,
+            )
 
             self.tstate = self.ramsete.startTrajectory(t)
         else:
