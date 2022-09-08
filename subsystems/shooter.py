@@ -65,12 +65,12 @@ class Shooter:
 
                 if not self.ballInPlace:
                     sd.putString("shooterState","Top yerine geliyor...")
-                    self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
                     sd.putBoolean("shooterRunning", True)
 
                 elif self.ballInPlace:
                     sd.putString("shooterState","Top yerinde, atisa baslaniyor...")
                     sd.putString("shooterState","Atisa baslandi!")
+                    self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
                     self.shooter_ramp_up()
 
                     if self.shooter_encoder.getDistance() > self.front_setpoint:
@@ -86,6 +86,7 @@ class Shooter:
                             self.shooter_timer.stop()
                             self.shooter_timer.reset()
                             self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
+                            self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
                             sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
                             sd.putBoolean("shooterRunning", False)
                             self.shooter_stop()

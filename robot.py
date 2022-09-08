@@ -120,9 +120,6 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
 
-        NetworkTables.initialize()
-        self.entry = NetworkTables.getEntry("Y")
-
     def atis_kontrol(self):
         pass
         # range = sd.getNumber("hubDistance", 0)
