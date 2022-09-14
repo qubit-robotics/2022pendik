@@ -3,7 +3,7 @@ import wpilib
 import ctre
 import magicbot
 from wpilib import SmartDashboard as sd
-from wpimath.controller import PIDController
+from wpimath.controller import PIDController, SimpleMotorFeedforwardMeters
 class Shooter:
     belt_upper: ctre.VictorSPX
     belt_lower: ctre.VictorSPX
@@ -41,14 +41,29 @@ class Shooter:
     front_setpoint = 3
     rear_setpoint = 1
 
+    _lastTm = -1
+
     def setup(self):
-        self.shooter_controller = PIDController(
-            5,
+        self.shooter_pid = PIDController(
+            0.22,
             0,
             0
         )
-        self.shooter_controller.setTolerance(0.1)
-        sd.putData(self.shooter_controller)
+
+        # self.shooter_ff = SimpleMotorFeedforwardMeters(
+        #     1.7686,
+        #     0.17723,
+        #     0.29475
+        # )
+        self.shooter_ff = SimpleMotorFeedforwardMeters(
+            1.0686,
+            0.17723,
+            0.29475
+        )
+        self.ff_timer = wpilib.Timer()
+
+        self.shooter_pid.setTolerance(5)
+        sd.putData(self.shooter_pid)
         
         for i in self.shooterMode:
             _state = (i == self.shooter_speedChange_value)
@@ -73,7 +88,7 @@ class Shooter:
                     self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
                     self.shooter_ramp_up()
 
-                    if self.shooter_encoder.getDistance() > self.front_setpoint:
+                    if self.shooter_pid.atSetpoint():
                         print("setpointte")
                         force = True
                     else:
@@ -113,7 +128,7 @@ class Shooter:
             self.shooter_speedChanged = True
 
         if self.shooter_speedChange_value == 0:
-            self.front_setpoint = 15
+            self.front_setpoint = 7.5
             self.rear_setpoint = 0.5            
 
         elif self.shooter_speedChange_value == 1:
@@ -138,11 +153,18 @@ class Shooter:
 
     def shooter_ramp_up(self):
 
-        # front_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
-        # print(front_voltage)
+        self.ff_timer.start()
+        now = self.ff_timer.get()
+        last_tm = self._lastTm
+        dt = now - last_tm
+        
+        shooter_ff_val = self.shooter_ff.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint, dt)
+        shooter_voltage = self.shooter_pid.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint) + shooter_ff_val
+        print("volts",shooter_voltage)
+        print("setpoint", self.front_setpoint)
 
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, 1)
-        self.shooter_front2.set(ctre.ControlMode.PercentOutput, 1)
+        self.shooter_front1.set(ctre.ControlMode.PercentOutput, shooter_voltage)
+        self.shooter_front2.set(ctre.ControlMode.PercentOutput, shooter_voltage)
         self.shooter_rear.set(ctre.ControlMode.PercentOutput, self.rear_setpoint)
 
     def shooter_stop(self):
@@ -153,4 +175,4 @@ class Shooter:
     
 
     def execute(self):
-        sd.putNumber("shooter_encoder",self.shooter_encoder.get())
+        pass
