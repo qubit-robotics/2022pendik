@@ -11,6 +11,8 @@ import hal
 import ctre
 import ctre._simvictorspx
 
+from math import degrees
+
 import constants
 
 import wpimath.geometry
@@ -67,7 +69,7 @@ class PhysicsEngine:
         self.flywheelSim = wpilib.simulation.FlywheelSim(
             DCMotor.RS775_125(2),
             3.25,
-            0.0043895948,
+            0.004,
         )
 
         self.shooter_motor_collection = robot.shooter_front1.getSimCollection()
@@ -175,6 +177,6 @@ class PhysicsEngine:
             self.shooter_motor_collection.getMotorOutputLeadVoltage()
         )
         self.shooter_encoder.setRate(
-            self.flywheelSim.getAngularVelocity() * 0.03
+            self.flywheelSim.getAngularVelocity() / 0.10472 / 60
         )
 

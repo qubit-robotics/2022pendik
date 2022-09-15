@@ -1,13 +1,13 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "723",
+      "height": "713",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
       "width": "1552",
-      "xpos": "361",
-      "ypos": "152"
+      "xpos": "810",
+      "ypos": "268"
     }
   },
   "Window": {
@@ -79,7 +79,7 @@
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,150",
-      "Size": "133,104"
+      "Size": "133,77"
     },
     "Debug##Default": {
       "Collapsed": "0",
