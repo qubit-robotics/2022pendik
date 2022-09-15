@@ -19,4 +19,4 @@ kMaxLEDRange = 20
 kCamResolutionWidth = 640
 kCamResolutionHeight = 480
 kMinTargetArea = 10
-kTargetHeight = 2.64
+kTargetHeight = 1.76

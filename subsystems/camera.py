@@ -14,12 +14,17 @@ class Camera:
                                                                     constants.kTargetHeight,
                                                                     radians(constants.kCamPitch),
                                                                     radians(pitch)))
+            print("hub dist ",photonvision.PhotonUtils.calculateDistanceToTarget(constants.kCamHeightOffGround,
+                                                                    constants.kTargetHeight,
+                                                                    radians(constants.kCamPitch),
+                                                                    radians(pitch)))
         else:
             sd.delete("hubDistance") #HUD'dan silinmiyor, ama kodun aptal bir sey yapmasindan iyidir.
     
     def get_yaw(self):
         if self.cam.hasTargets():
             sd.putNumber("hubYaw", -self.cam.getLatestResult().getBestTarget().getYaw())
+            print("yaw", -self.cam.getLatestResult().getBestTarget().getYaw())
         else:
             sd.delete("hubYaw") #HUD'dan silinmiyor, ama kodun aptal bir sey yapmasindan iyidir.
     

@@ -10,6 +10,7 @@ from subsystems.intake import Intake
 from subsystems.shooter import Shooter
 from subsystems.climb import Climb
 from components.path import RamseteComponent
+from components.aimbot import AimBot
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -20,16 +21,16 @@ class MyRobot(magicbot.MagicRobot):
     drivetrain: DriveTrain
     shooter: Shooter
     intake: Intake
-    # camera: Camera
+    camera: Camera
     climb: Climb
-    # aimbot: AimBot
+    aimbot: AimBot
     # ramsete: RamseteComponent
             
-    def climb_control(self):
-        self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
-        self.climbMotor1_UpInput = self.flightStick.getRawButton(5)
-        self.climbMotor2_LowInput = self.flightStick.getRawButton(6)
-        self.climbMotor2_UpInput = self.flightStick.getRawButton(7)
+    # def climb_control(self):
+    #     self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
+    #     self.climbMotor1_UpInput = self.flightStick.getRawButton(5)
+    #     self.climbMotor2_LowInput = self.flightStick.getRawButton(6)
+    #     self.climbMotor2_UpInput = self.flightStick.getRawButton(7)
         
         # if self.climbMotor1_LowInput:
         #     print("sa")
@@ -49,7 +50,6 @@ class MyRobot(magicbot.MagicRobot):
     def intake_shooter_control(self):
         intake_driverInput = self.flightStick.getRawButton(2)        
         shooter_driverInput = self.flightStick.getRawButton(1)
-        shooter_changeSpeed_Input = self.flightStick.getRawButtonPressed(3) #Bu diger class'in icinde calismiyor. Neden bilmiyorum.
 
         if intake_driverInput:
             print("intake tusa basti!")
@@ -63,16 +63,24 @@ class MyRobot(magicbot.MagicRobot):
             sd.putBoolean("shooterRunning", True)
 
         self.shooter.shooter_begin()
-        self.shooter.speed_config(shooter_changeSpeed_Input)
+        self.shooter.speed_config()
         self.intake.intake_begin()
+    
+    def climb_control(self):
+        if self.flightStick.getRawButton(6):
+            self.climb.move_string(1)
+        elif self.flightStick.getRawButton(7):
+            self.climb.move_string(-1)
+        else:
+            self.climb.execute()
 
     def createObjects(self):
         '''Create motors and stuff here'''
         self.cam = photonvision.PhotonCamera("camera1")
         self.intakespeed = 0.8
-        self.drive_fLeft = wpilib.PWMVictorSPX(0)
-        self.drive_rLeft = wpilib.PWMVictorSPX(1)
-        self.drive_fRight = wpilib.PWMVictorSPX(2)
+        self.drive_fLeft = wpilib.PWMVictorSPX(2)
+        self.drive_rLeft = wpilib.PWMVictorSPX(0)
+        self.drive_fRight = wpilib.PWMVictorSPX(1)
         self.drive_rRight = wpilib.PWMVictorSPX(3)
 
         self.drive_fLeft.setSafetyEnabled(0)
@@ -86,7 +94,7 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
 
         self.shooter_encoder = wpilib.Encoder(9, 8, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
-        self.shooter_encoder.setDistancePerPulse(0.03 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
+        self.shooter_encoder.setDistancePerPulse(0.307692308 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
 
         self.gyro = wpilib.ADIS16448_IMU()
         self.gyro.calibrate()
@@ -97,8 +105,8 @@ class MyRobot(magicbot.MagicRobot):
         self.belt_lower = ctre.WPI_VictorSPX(7)
         self.belt_upper = ctre.WPI_VictorSPX(6)
 
-        self.climb_low = ctre.WPI_VictorSPX(4)
-        self.climb_up = ctre.WPI_VictorSPX(5)
+        self.climb_low = ctre.WPI_VictorSPX(5)
+        self.climb_up = ctre.WPI_VictorSPX(4)
 
         self.switch_upper = wpilib.DigitalInput(3)
         self.switch_lower = wpilib.DigitalInput(4)
@@ -137,9 +145,9 @@ class MyRobot(magicbot.MagicRobot):
         # else:
         #     sd.putBoolean("atis_Kontrol",False)
 
-    # def robotPeriodic(self):
-    #     self.camera.get_distance()
-    #     self.camera.get_yaw()
+    def robotPeriodic(self):
+        self.camera.get_distance()
+        self.camera.get_yaw()
 
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
@@ -156,8 +164,17 @@ class MyRobot(magicbot.MagicRobot):
         
         self.intake_shooter_control()
         # self.climb.set_climbMotorSpeed()
+        self.aimbot.setup()
         self.atis_kontrol()
         self.climb_control()
+        self.shooter.speed_config()
+        if self.gamepad.getRawButton(5):
+            self.aimbot.execute()
+        if self.flightStick.getRawButton(4): #TODO: Burayı sil
+            self.shooter.shooter_ramp_up()
+        elif not self.flightStick.getRawButton(4):
+            self.shooter.shooter_stop()
+        print("rate", self.shooter_encoder.getRate())
             
 
 if __name__ == '__main__':

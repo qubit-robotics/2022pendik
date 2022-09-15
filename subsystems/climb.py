@@ -1,25 +1,22 @@
 import wpilib
 import ctre
 from wpilib import SmartDashboard as sd
+import magicbot
 
 class Climb:
     climb_low: ctre.WPI_VictorSPX
     climb_up: ctre.WPI_VictorSPX
 
-    def execute(self):
-        climbMotor1 = sd.getNumber("climbMotor1",0)
-        climbMotor2 = sd.getNumber("climbMotor2",0)
+    val_string = magicbot.will_reset_to(0)
+    val_tilt = magicbot.will_reset_to(0)
 
-        if climbMotor1 == 0:
-            self.climb_low.set(ctre.ControlMode.PercentOutput, 0)
-        elif climbMotor1 == 1:
-            self.climb_low.set(ctre.ControlMode.PercentOutput, 1)
-        elif climbMotor1 == -1:
-            self.climb_low.set(ctre.ControlMode.PercentOutput, -1)
-        if climbMotor2 == 0:
-            self.climb_up.set(ctre.ControlMode.PercentOutput, 0)
-        elif climbMotor2 == 1:
-            self.climb_up.set(ctre.ControlMode.PercentOutput, 1)
-        elif climbMotor2 == -1:
-            self.climb_up.set(ctre.ControlMode.PercentOutput, -1)
+    def move_string(self, val):
+        self.val_string = val
+
+    def move_tilt(self, val):
+        self.val_tilt = val
+
+    def execute(self):
+        self.climb_low.set(ctre.ControlMode.PercentOutput, self.val_string)
+        self.climb_up.set(ctre.ControlMode.PercentOutput, self.val_tilt)
         

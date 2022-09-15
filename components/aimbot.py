@@ -6,10 +6,10 @@ from subsystems.drivetrain import DriveTrain
 
 class AimBot:
 
-    LINEAR_P = 0.5
+    LINEAR_P = 1
     LINEAR_D = 0.2
     ANGULAR_P = 0.01
-    ANGULAR_D = 0.005
+    ANGULAR_D = 0
 
     cam: photonvision.PhotonCamera
     drivetrain: DriveTrain
@@ -30,13 +30,24 @@ class AimBot:
             rotationSpeed = self.turnController.calculate(sd.getNumber("hubYaw", 0), 0)
             forwardSpeed = self.forwardController.calculate(sd.getNumber("hubDistance", 0), self.desiredDistance)
 
-            self.turnController.setTolerance(5)
+            self.turnController.setTolerance(10)
             self.forwardController.setTolerance(0.1)
+            sd.putBoolean("auto_turnControllerSetpoint", self.turnController.atSetpoint())
+            sd.putBoolean("auto_forwardControllerSetpoint", self.forwardController.atSetpoint())
 
+            if not self.turnController.atSetpoint():
+                self.drivetrain.move(0, 0, rotationSpeed)
+                print("turn not setpoint")
+
+            elif not self.turnController.atSetpoint():
+                self.drivetrain.move(forwardSpeed, 0.0, 0)
+                print("forward not setpoint")
+            
             if self.turnController.atSetpoint() and self.forwardController.atSetpoint():
                 sd.putBoolean("auto_botInPlace", True)
+            
             else:
-                self.drivetrain.move(forwardSpeed, 0.0, rotationSpeed)
                 sd.putBoolean("auto_botInPlace", False)
+
         else:
             self.drivetrain.move(0,0,0.5)

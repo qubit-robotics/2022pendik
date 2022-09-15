@@ -7,7 +7,6 @@ class DriveTrain():
     drive_rLeft: wpilib.PWMVictorSPX
     drive_fRight: wpilib.PWMVictorSPX
     drive_rRight: wpilib.PWMVictorSPX
-
     throttle_y = 0 # robotun Y ekseninde ilerlemesi
     throttle_x = 0 # robotun X ekseninde ilerlemesi
     rotation = 0
@@ -18,8 +17,8 @@ class DriveTrain():
     tank_drive = magicbot.will_reset_to(False)
 
     def setup(self):
-        self.drive_fRight.setInverted(1)
-        self.drive_rRight.setInverted(1)
+        self.drive_fLeft.setInverted(1)
+        self.drive_rLeft.setInverted(1)
 
         self.drive = wpilib.drive.MecanumDrive(
             self.drive_fLeft,
@@ -28,10 +27,10 @@ class DriveTrain():
             self.drive_rRight,
         )
 
-    def move(self, throttle_y: float, throttle_x: float, rotation: float):
+    def move(self, throttle_x: float, throttle_y: float, rotation: float):
         self.throttle_y = throttle_y
-        self.throttle_x = throttle_x
-        self.rotation = rotation
+        self.throttle_x = -throttle_x
+        self.rotation = -rotation
 
     def tank_move(self, throttle_left_volts, throttle_right_volts):
         self.tank_drive = True
@@ -46,8 +45,7 @@ class DriveTrain():
         
     def execute(self):
         if not self.tank_drive:
-            self.drive.driveCartesian(-self.throttle_y, self.throttle_x, self.rotation, 0)
-        
+            self.drive.driveCartesian(self.throttle_y, self.throttle_x, self.rotation, 0)
         else:
             pass
 
