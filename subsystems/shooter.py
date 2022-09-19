@@ -43,6 +43,8 @@ class Shooter:
 
     _lastTm = -1
 
+    force = False
+
 
     def setup(self):
         self.shooter_controller = PIDController(
@@ -51,19 +53,13 @@ class Shooter:
             0
         )
         self.shooter_ff = SimpleMotorFeedforwardMeters(
-            1.7686,
+            -1.7686,
             0.17723,
             0.29475
         )
 
         self.ff_timer = wpilib.Timer()
-
-        self.shooter_controller.setTolerance(4)
         sd.putData(self.shooter_controller)
-        
-        for i in self.shooterMode:
-            _state = (i == self.shooter_speedChange_value)
-            sd.putBoolean(self.shooterMode.get(i), _state)
 
 
     def shooter_begin(self):
@@ -85,10 +81,14 @@ class Shooter:
                     self.shooter_ramp_up()
 
                     if self.shooter_controller.atSetpoint():
+                        self.ff_timer.start()
                         print("setpointte")
-                        force = True
+                        if self.ff_timer.get() > 1:
+                            self.force = True
+                            self.ff_timer.stop()
+                            self.ff_timer.reset()
                     else:
-                        force = False
+                        self.force = False
 
                     if (not self.switch_upper.get()):
                         sd.putString("shooterState","Atis Bitti.")
@@ -103,9 +103,9 @@ class Shooter:
                             self.shooter_stop()
                             self.shooter_encoder.reset()
                             self.ballInPlace = False
-                            force = False
+                            self.force = False
 
-                    elif force:
+                    elif self.force:
                         print("ust belt calisiyor")
                         self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
 
@@ -124,15 +124,15 @@ class Shooter:
             self.shooter_speedChanged = True
 
         if self.shooter_speedChange_value == 0:
-            self.front_setpoint = 15
+            self.front_setpoint = 30
             self.rear_setpoint = 0.5            
 
         elif self.shooter_speedChange_value == 1:
-            self.front_setpoint = 30
+            self.front_setpoint = 60
             self.rear_setpoint = 0.5
 
         elif self.shooter_speedChange_value == 2:
-            self.front_setpoint = 15
+            self.front_setpoint = 30
             self.rear_setpoint = 1
         
         elif self.shooter_speedChange_value == 3:
@@ -140,22 +140,14 @@ class Shooter:
             self.rear_setpoint = 1
 
         if self.shooter_speedChanged:
-            self.shooter_speedChanged = False
-
-            for i in self.shooterMode:
-                _state = (i == self.shooter_speedChange_value)
-                sd.putBoolean(self.shooterMode.get(i), _state)
-
+            self.shooter_speedChanged = False      
 
     def shooter_ramp_up(self):
+        self.shooter_controller.setTolerance(5)
 
-        self.ff_timer.start()
-        now = self.ff_timer.get()
-        last_tm = self._lastTm
-        dt = now - last_tm
-
-        # shooter_ff_val = self.shooter_ff.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
-        shooter_voltage = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
+        shooter_ff_val = self.shooter_ff.calculate(-self.shooter_encoder.getRate(), self.front_setpoint)
+        dummyValue = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
+        shooter_voltage = shooter_ff_val
         print("setpoint", self.front_setpoint)
 
         self.shooter_front1.setVoltage(shooter_voltage)
@@ -171,3 +163,5 @@ class Shooter:
 
     def execute(self):
         sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
+        sd.putNumber("front_setpoint", self.front_setpoint)
+        sd.putNumber("rear_setpoint", self.rear_setpoint)

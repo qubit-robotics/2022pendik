@@ -25,27 +25,6 @@ class MyRobot(magicbot.MagicRobot):
     climb: Climb
     aimbot: AimBot
     # ramsete: RamseteComponent
-            
-    # def climb_control(self):
-    #     self.climbMotor1_LowInput = self.flightStick.getRawButton(4)
-    #     self.climbMotor1_UpInput = self.flightStick.getRawButton(5)
-    #     self.climbMotor2_LowInput = self.flightStick.getRawButton(6)
-    #     self.climbMotor2_UpInput = self.flightStick.getRawButton(7)
-        
-        # if self.climbMotor1_LowInput:
-        #     print("sa")
-        #     self.climb_low.set(ctre.ControlMode.PercentOutput, 0)
-        # elif self.climbMotor1_UpInput:
-        #     sd.putNumber("climbMotor1",1)
-        # else:
-        #     print("jfkenedy")
-        #     self.climb_low.set(ctre.ControlMode.PercentOutput, 1)
-        # if self.climbMotor2_LowInput:
-        #     sd.putNumber("climbMotor2",-1)
-        # elif self.climbMotor2_UpInput:
-        #     sd.putNumber("climbMotor2",1)
-        # else:
-        #     sd.putNumber("climbMotor2",0)
 
     def intake_shooter_control(self):
         intake_driverInput = self.flightStick.getRawButton(2)        
@@ -148,6 +127,7 @@ class MyRobot(magicbot.MagicRobot):
     def robotPeriodic(self):
         self.camera.get_distance()
         self.camera.get_yaw()
+        self.shooter.execute()
 
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
@@ -163,18 +143,13 @@ class MyRobot(magicbot.MagicRobot):
             self.onException()
         
         self.intake_shooter_control()
-        # self.climb.set_climbMotorSpeed()
         self.aimbot.setup()
         self.atis_kontrol()
         self.climb_control()
         self.shooter.speed_config()
         if self.gamepad.getRawButton(5):
             self.aimbot.execute()
-        if self.flightStick.getRawButton(4): #TODO: Burayı sil
-            self.shooter.shooter_ramp_up()
-        elif not self.flightStick.getRawButton(4):
-            self.shooter.shooter_stop()
-        print("rate", self.shooter_encoder.getRate())
+        print("shooter_encoder", self.shooter_encoder.getRate())
             
 
 if __name__ == '__main__':
