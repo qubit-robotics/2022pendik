@@ -1,6 +1,4 @@
 import math
-from telnetlib import Telnet
-from time import sleep
 import magicbot
 import wpilib
 from wpimath.controller import PIDController
@@ -14,7 +12,6 @@ from components.aimbot import AimBot
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
-from networktables import NetworkTables
 
 class MyRobot(magicbot.MagicRobot):
 
@@ -31,12 +28,10 @@ class MyRobot(magicbot.MagicRobot):
         shooter_driverInput = self.flightStick.getRawButton(1)
 
         if intake_driverInput:
-            print("intake tusa basti!")
             sd.putString("shooterState","Inactive")
             sd.putBoolean("intakeRunning", True)
             sd.putBoolean("shooterRunning", False)
         if shooter_driverInput:
-            print("shooter tusa basti!")
             sd.putString("IntakeState","Inactive")
             sd.putBoolean("intakeRunning", False)
             sd.putBoolean("shooterRunning", True)
@@ -69,8 +64,8 @@ class MyRobot(magicbot.MagicRobot):
 
         self.drive_FrontLeftEncoder = wpilib.Encoder(0,1, encodingType=wpilib.Encoder.EncodingType.k4X)
         self.drive_FrontRightEncoder = wpilib.Encoder(5,6, reverseDirection=True, encodingType=wpilib.Encoder.EncodingType.k4X)
-        self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 1024)
-        self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 1024)
+        self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 360)
+        self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 360)
 
         self.shooter_encoder = wpilib.Encoder(9, 8, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
         self.shooter_encoder.setDistancePerPulse(0.307692308 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
@@ -107,23 +102,6 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
 
-    def atis_kontrol(self):
-        pass
-        # range = sd.getNumber("hubDistance", 0)
-        # tolerance = 0.2
-        # if self.shooter_speedChange_value == 0:
-        #     goal = 0.5
-        # elif self.shooter_speedChange_value == 1:
-        #     goal = 1
-        # elif self.shooter_speedChange_value == 2:
-        #     goal = 3
-        # elif self.shooter_speedChange_value == 3:
-        #     goal = 2
-        # if ((range-tolerance) < goal) and ((range+tolerance) > goal):
-        #     sd.putBoolean("atis_Kontrol",True)
-        # else:
-        #     sd.putBoolean("atis_Kontrol",False)
-
     def robotPeriodic(self):
         self.camera.get_distance()
         self.camera.get_yaw()
@@ -144,12 +122,12 @@ class MyRobot(magicbot.MagicRobot):
         
         self.intake_shooter_control()
         self.aimbot.setup()
-        self.atis_kontrol()
         self.climb_control()
         self.shooter.speed_config()
         if self.gamepad.getRawButton(5):
             self.aimbot.execute()
-        print("shooter_encoder", self.shooter_encoder.getRate())
+        if self.gamepad.getRawButton(6):
+            self.drivetrain.enable_slowdown()
             
 
 if __name__ == '__main__':
