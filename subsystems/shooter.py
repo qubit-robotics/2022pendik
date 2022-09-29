@@ -29,7 +29,7 @@ class Shooter:
     flightStick: wpilib.Joystick
 
     shooterMode = {
-        0: "Lower Hub Dipdibe",
+        0: "Upper Hub Tarmac Cizgi",
         1: "Lower Hub",
         2: "Upper Hub",
         3: "Upper Hub 2 Metre"
@@ -68,11 +68,14 @@ class Shooter:
             if sd.getNumber("ballCount", 1) >= 1 and not sd.getBoolean("intakeRunning", False):
                 if (self.switch_upper.get()) and (not self.ballInPlace):
                     sd.putString("shooterState","Top yerinde")
+                    self.belt_upper.set(0)
                     self.ballInPlace = True
 
                 if not self.ballInPlace:
                     sd.putString("shooterState","Top yerine geliyor...")
                     sd.putBoolean("shooterRunning", True)
+                    self.belt_upper.set(0.5)
+                    self.belt_lower.set(-0.5)
 
                 elif self.ballInPlace:
                     sd.putString("shooterState","Top yerinde, atisa baslaniyor...")
@@ -87,13 +90,14 @@ class Shooter:
                             self.force = True
                             self.ff_timer.stop()
                             self.ff_timer.reset()
+                            self.shooter_controller.reset()
                     else:
                         self.force = False
 
                     if (not self.switch_upper.get()):
                         sd.putString("shooterState","Atis Bitti.")
                         self.shooter_timer.start()
-                        if self.shooter_timer.get() > 2:
+                        if self.shooter_timer.get() > 1:
                             self.shooter_timer.stop()
                             self.shooter_timer.reset()
                             self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
@@ -124,7 +128,7 @@ class Shooter:
             self.shooter_speedChanged = True
 
         if self.shooter_speedChange_value == 0:
-            self.front_setpoint = 30
+            self.front_setpoint = 50
             self.rear_setpoint = 0.5            
 
         elif self.shooter_speedChange_value == 1:
