@@ -37,11 +37,9 @@ class AimBot:
 
             if not self.turnController.atSetpoint():
                 self.drivetrain.move(0, 0, rotationSpeed)
-                print("turn not setpoint")
 
             elif not self.turnController.atSetpoint():
                 self.drivetrain.move(forwardSpeed, 0.0, 0)
-                print("forward not setpoint")
             
             if self.turnController.atSetpoint() and self.forwardController.atSetpoint():
                 sd.putBoolean("auto_botInPlace", True)

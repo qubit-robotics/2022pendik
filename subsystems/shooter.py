@@ -24,7 +24,6 @@ class Shooter:
     shooter_encoder: wpilib.Encoder
 
     ballInPlace = False
-    force_shoot= False
 
     flightStick: wpilib.Joystick
 
@@ -38,10 +37,8 @@ class Shooter:
     shooter_speedChange_value = 0
     shooter_speedChanged = False
 
-    front_setpoint = 3
+    front_setpoint = 30
     rear_setpoint = 1
-
-    _lastTm = -1
 
     force = False
 
@@ -59,7 +56,6 @@ class Shooter:
         )
 
         self.ff_timer = wpilib.Timer()
-        sd.putData(self.shooter_controller)
 
 
     def shooter_begin(self):

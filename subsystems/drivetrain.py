@@ -16,6 +16,8 @@ class DriveTrain():
 
     tank_drive = magicbot.will_reset_to(False)
 
+    slowdown = magicbot.will_reset_to(False)
+
     def setup(self):
         self.drive_fLeft.setInverted(1)
         self.drive_rLeft.setInverted(1)
@@ -26,6 +28,9 @@ class DriveTrain():
             self.drive_fRight,
             self.drive_rRight,
         )
+    
+    def enable_slowdown(self):
+        self.slowdown = True
 
     def move(self, throttle_x: float, throttle_y: float, rotation: float):
         self.throttle_y = throttle_y
@@ -45,7 +50,10 @@ class DriveTrain():
         
     def execute(self):
         if not self.tank_drive:
-            self.drive.driveCartesian(self.throttle_y, self.throttle_x, self.rotation, 0)
+            if self.slowdown:
+                self.drive.driveCartesian(self.throttle_y * 0.5, self.throttle_x * 0.5, self.rotation * 0.5, 0)
+            else:
+                self.drive.driveCartesian(self.throttle_y, self.throttle_x, self.rotation, 0)
         else:
             pass
 
