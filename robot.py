@@ -120,8 +120,11 @@ class MyRobot(magicbot.MagicRobot):
         self.throttle_y_input = self.gamepad.getRawAxis(0)
         self.throttle_x_input = self.gamepad.getRawAxis(1)
         self.rotate_input = self.gamepad.getRawAxis(2)
+
+        self.slowdown_input = self.gamepad.getRawButton(6)
+        
         try:
-            self.drivetrain.move(self.throttle_y_input, self.throttle_x_input, self.rotate_input)
+            self.drivetrain.move(self.throttle_y_input, self.throttle_x_input, self.rotate_input, self.slowdown_input)
 
         except:
             self.onException()
@@ -132,8 +135,6 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter.speed_config()
         if self.gamepad.getRawButton(5):
             self.aimbot.execute()
-        if self.gamepad.getRawButton(6):
-            self.drivetrain.enable_slowdown()
             
 
 if __name__ == '__main__':

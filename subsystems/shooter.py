@@ -4,6 +4,7 @@ import ctre
 import magicbot
 from wpilib import SmartDashboard as sd
 from wpimath.controller import PIDController, SimpleMotorFeedforwardMeters
+
 class Shooter:
     belt_upper: ctre.WPI_VictorSPX
     belt_lower: ctre.WPI_VictorSPX
