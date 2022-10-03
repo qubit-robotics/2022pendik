@@ -49,6 +49,9 @@ class Shooter:
             0,
             0
         )
+        
+        self.shooter_controller.setTolerance(5)
+
         self.shooter_ff = SimpleMotorFeedforwardMeters(
             -1.7686,
             0.17723,
@@ -81,7 +84,6 @@ class Shooter:
 
                     if self.shooter_controller.atSetpoint():
                         self.ff_timer.start()
-                        print("setpointte")
                         if self.ff_timer.get() > 1:
                             self.force = True
                             self.ff_timer.stop()
@@ -106,7 +108,6 @@ class Shooter:
                             self.force = False
 
                     elif self.force:
-                        print("ust belt calisiyor")
                         self.belt_upper.setVoltage(12)
             else:
                 sd.putString("shooterState","Hic Topun Yok!")
@@ -142,19 +143,16 @@ class Shooter:
             self.shooter_speedChanged = False      
 
     def shooter_ramp_up(self):
-        self.shooter_controller.setTolerance(5)
-
         shooter_ff_val = self.shooter_ff.calculate(-self.shooter_encoder.getRate(), self.front_setpoint)
         dummyValue = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
+
         shooter_voltage = shooter_ff_val
-        print("setpoint", self.front_setpoint)
 
         self.shooter_front1.setVoltage(shooter_voltage)
         self.shooter_front2.setVoltage(shooter_voltage)
         self.shooter_rear.setVoltage(self.rear_setpoint)
 
     def shooter_stop(self):
-
         self.shooter_front1.set(0)
         self.shooter_front2.set(0)
         self.shooter_rear.set(0)

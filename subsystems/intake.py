@@ -24,8 +24,6 @@ class Intake:
                 sd.putString("IntakeState","2 ADET TOPUN VAR!!!")
 
     def intake_firstBall(self):
-        print('intakefirstball')
-        print(self.switch_lower.get())
         if self.switch_upper.get() == True:
             self.eval()
             self.belt_lower.set(0)
@@ -39,8 +37,6 @@ class Intake:
             sd.putString("IntakeState","1. Top yerine geliyor...")
     
     def intake_secondBall(self):
-        print('intakesecondball')
-        print(self.switch_lower.get())
         if self.switch_upper.get():
             if self.conveyor:
                 self.belt_upper.set(0)
