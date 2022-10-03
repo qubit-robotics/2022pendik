@@ -27,6 +27,9 @@ class MyRobot(magicbot.MagicRobot):
         intake_driverInput = self.flightStick.getRawButton(2)        
         shooter_driverInput = self.flightStick.getRawButton(1)
 
+        intake_man_increase = self.flightStick.getRawButtonPressed(4)
+        intake_man_decrease = self.flightStick.getRawButtonPressed(4)
+
         if intake_driverInput:
             sd.putString("shooterState","Inactive")
             sd.putBoolean("intakeRunning", True)
@@ -39,6 +42,7 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter.shooter_begin()
         self.shooter.speed_config()
         self.intake.intake_begin()
+        self.intake.man_eval(intake_man_decrease, intake_man_increase)
     
     def climb_control(self):
         if self.flightStick.getRawButton(6):
@@ -67,7 +71,7 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 360)
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 360)
 
-        self.shooter_encoder = wpilib.Encoder(2, 3, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
+        self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
         self.shooter_encoder.setDistancePerPulse(0.307692308 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
 
         self.gyro = wpilib.ADIS16448_IMU()
@@ -78,6 +82,7 @@ class MyRobot(magicbot.MagicRobot):
 
         self.belt_lower = ctre.WPI_VictorSPX(7)
         self.belt_upper = ctre.WPI_VictorSPX(6)
+        self.belt_lower.setInverted(1)
 
         self.climb_low = ctre.WPI_VictorSPX(5)
         self.climb_up = ctre.WPI_VictorSPX(4)

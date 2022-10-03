@@ -5,15 +5,15 @@ import magicbot
 from wpilib import SmartDashboard as sd
 from wpimath.controller import PIDController, SimpleMotorFeedforwardMeters
 class Shooter:
-    belt_upper: ctre.VictorSPX
-    belt_lower: ctre.VictorSPX
+    belt_upper: ctre.WPI_VictorSPX
+    belt_lower: ctre.WPI_VictorSPX
 
     switch_upper: wpilib.DigitalInput
     switch_lower: wpilib.DigitalInput
 
-    shooter_front1: ctre.VictorSPX
-    shooter_front2: ctre.VictorSPX
-    shooter_rear: ctre.VictorSPX
+    shooter_front1: ctre.WPI_VictorSPX
+    shooter_front2: ctre.WPI_VictorSPX
+    shooter_rear: ctre.WPI_VictorSPX
 
     shooter_timer: wpilib.Timer
 
@@ -70,13 +70,13 @@ class Shooter:
                 if not self.ballInPlace:
                     sd.putString("shooterState","Top yerine geliyor...")
                     sd.putBoolean("shooterRunning", True)
-                    self.belt_upper.set(0.5)
-                    self.belt_lower.set(-0.5)
+                    self.belt_upper.setVoltage(6)
+                    self.belt_lower.setVoltage(6)
 
                 elif self.ballInPlace:
                     sd.putString("shooterState","Top yerinde, atisa baslaniyor...")
                     sd.putString("shooterState","Atisa baslandi!")
-                    self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
+                    self.belt_lower.set(0)
                     self.shooter_ramp_up()
 
                     if self.shooter_controller.atSetpoint():
@@ -96,8 +96,8 @@ class Shooter:
                         if self.shooter_timer.get() > 1:
                             self.shooter_timer.stop()
                             self.shooter_timer.reset()
-                            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
-                            self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
+                            self.belt_upper.set(0)
+                            self.belt_lower.set(0)
                             sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
                             sd.putBoolean("shooterRunning", False)
                             self.shooter_stop()
@@ -107,8 +107,7 @@ class Shooter:
 
                     elif self.force:
                         print("ust belt calisiyor")
-                        self.belt_upper.set(ctre.ControlMode.PercentOutput, 1)
-
+                        self.belt_upper.setVoltage(12)
             else:
                 sd.putString("shooterState","Hic Topun Yok!")
                 sd.putBoolean("shooterRunning", False)
@@ -125,19 +124,19 @@ class Shooter:
 
         if self.shooter_speedChange_value == 0:
             self.front_setpoint = 50
-            self.rear_setpoint = 0.5            
+            self.rear_setpoint = 12            
 
         elif self.shooter_speedChange_value == 1:
             self.front_setpoint = 60
-            self.rear_setpoint = 0.5
+            self.rear_setpoint = 6
 
         elif self.shooter_speedChange_value == 2:
             self.front_setpoint = 30
-            self.rear_setpoint = 1
+            self.rear_setpoint = 12
         
         elif self.shooter_speedChange_value == 3:
             self.front_setpoint = 60
-            self.rear_setpoint = 1
+            self.rear_setpoint = 12
 
         if self.shooter_speedChanged:
             self.shooter_speedChanged = False      
@@ -152,13 +151,13 @@ class Shooter:
 
         self.shooter_front1.setVoltage(shooter_voltage)
         self.shooter_front2.setVoltage(shooter_voltage)
-        self.shooter_rear.set(ctre.ControlMode.PercentOutput, self.rear_setpoint)
+        self.shooter_rear.setVoltage(self.rear_setpoint)
 
     def shooter_stop(self):
 
-        self.shooter_front1.set(ctre.ControlMode.PercentOutput, 0)
-        self.shooter_front2.set(ctre.ControlMode.PercentOutput, 0)
-        self.shooter_rear.set(ctre.ControlMode.PercentOutput, 0)
+        self.shooter_front1.set(0)
+        self.shooter_front2.set(0)
+        self.shooter_rear.set(0)
     
 
     def execute(self):

@@ -6,8 +6,8 @@
       "style": "0",
       "userScale": "2",
       "width": "1280",
-      "xpos": "124",
-      "ypos": "268"
+      "xpos": "57",
+      "ypos": "66"
     }
   },
   "Window": {
@@ -23,7 +23,7 @@
     },
     "###DIO": {
       "Collapsed": "0",
-      "Pos": "319,135",
+      "Pos": "319,136",
       "Size": "162,215"
     },
     "###Encoders": {
@@ -38,7 +38,7 @@
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "560,458",
+      "Pos": "306,483",
       "Size": "796,155"
     },
     "###Keyboard 0 Settings": {
@@ -53,7 +53,7 @@
     },
     "###NetworkTables": {
       "Collapsed": "0",
-      "Pos": "530,312",
+      "Pos": "20,574",
       "Size": "750,185"
     },
     "###Other Devices": {

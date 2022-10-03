@@ -27,13 +27,14 @@ class Intake:
         print('intakefirstball')
         print(self.switch_lower.get())
         if self.switch_upper.get() == True:
-            self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
-            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
+            self.eval()
+            self.belt_lower.set(0)
+            self.belt_upper.set(0)
             sd.putBoolean("intakeRunning", False)
             sd.putString("IntakeState","1. Top yerinde!")
         else:
-            self.belt_lower.set(ctre.ControlMode.PercentOutput, -0.8)
-            self.belt_upper.set(ctre.ControlMode.PercentOutput, 0.5)
+            self.belt_lower.setVoltage(12)
+            self.belt_upper.setVoltage(6)
             sd.putBoolean("intakeRunning", True)
             sd.putString("IntakeState","1. Top yerine geliyor...")
     
@@ -41,25 +42,28 @@ class Intake:
         print('intakesecondball')
         print(self.switch_lower.get())
         if self.switch_upper.get():
-            self.belt_upper.set(0)
-            self.conveyor = False
+            if self.conveyor:
+                self.belt_upper.set(0)
+                self.belt_lower.set(0)
+                self.conveyor = False
             if self.switch_lower.get() == False:
-                self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
-                self.belt_lower.set(ctre.ControlMode.PercentOutput, -0.4)
+                self.eval()
+                self.belt_upper.setVoltage(0)
+                self.belt_lower.setVoltage(4)
                 sd.putBoolean("intakeRunning", True)
                 sd.putString("IntakeState","2. Top yerine geliyor...")
             elif self.switch_lower.get():
-                self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
+                self.eval()
                 sd.putBoolean("intakeRunning", False)
                 sd.putString("IntakeState","2. Top yerinde!")
-                self.belt_lower.set(ctre.ControlMode.PercentOutput, 0)
-                self.belt_upper.set(ctre.ControlMode.PercentOutput, 0)
+                self.belt_lower.set(0)
+                self.belt_upper.set(0)
         else:
             self.conveyor = True
-            self.belt_lower.set(-0.5)
-            self.belt_upper.set(0.3)
+            self.belt_lower.setVoltage(6)
+            self.belt_upper.setVoltage(4)
 
-    def execute(self):
+    def eval(self):
         if (not (sd.getBoolean("shooterRunning",False))) and (not self.conveyor):
             if (self.switch_lower.get()) and (self.switch_upper.get()):
                 sd.putNumber("ballCount", 2)
@@ -67,6 +71,16 @@ class Intake:
                 sd.putNumber("ballCount", 1)
             else:
                 sd.putNumber("ballCount",0)
-                print(420)
+    
+    def man_eval(self, decrease, increase):
+        if increase and decrease:
+            print("iki tusa ayni anda basma!")
+        elif increase:
+            sd.putNumber("ballCount", sd.getNumber("ballCount", 1) + 1)
+        elif decrease:
+            sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
+        
+    def execute(self):
+        pass
 
         
