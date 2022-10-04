@@ -28,7 +28,7 @@ class MyRobot(magicbot.MagicRobot):
         shooter_driverInput = self.flightStick.getRawButton(1)
 
         intake_man_increase = self.flightStick.getRawButtonPressed(4)
-        intake_man_decrease = self.flightStick.getRawButtonPressed(4)
+        intake_man_decrease = self.flightStick.getRawButtonPressed(3)
 
         if intake_driverInput:
             sd.putString("shooterState","Inactive")

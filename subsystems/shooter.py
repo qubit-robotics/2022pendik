@@ -90,6 +90,7 @@ class Shooter:
                             self.ff_timer.stop()
                             self.ff_timer.reset()
                             self.shooter_controller.reset()
+                            self.shooter_encoder.reset()
                     else:
                         self.force = False
 

@@ -45,7 +45,7 @@ class Intake:
             if self.switch_lower.get() == False:
                 self.eval()
                 self.belt_upper.setVoltage(0)
-                self.belt_lower.setVoltage(4)
+                self.belt_lower.setVoltage(6)
                 sd.putBoolean("intakeRunning", True)
                 sd.putString("IntakeState","2. Top yerine geliyor...")
             elif self.switch_lower.get():
@@ -56,7 +56,7 @@ class Intake:
                 self.belt_upper.set(0)
         else:
             self.conveyor = True
-            self.belt_lower.setVoltage(6)
+            self.belt_lower.setVoltage(8)
             self.belt_upper.setVoltage(4)
 
     def eval(self):
