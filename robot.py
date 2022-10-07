@@ -9,6 +9,7 @@ from subsystems.shooter import Shooter
 from subsystems.climb import Climb
 from components.path import RamseteComponent
 from components.aimbot import AimBot
+from custom_sensor_classes.customAbsoluteEncoder import lm393Encoder
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -106,11 +107,14 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("climbMotor1",0)
         sd.putNumber("climbMotor2",0)
         sd.putBoolean("atis_Kontrol",False)
+        
+        self.encoder = lm393Encoder(3, 2)
 
     def robotPeriodic(self):
         self.camera.get_distance()
         self.camera.get_yaw()
         self.shooter.execute()
+        self.encoder.periodic()
 
     def teleopPeriodic(self):
         print(self.switch_upper.get())
@@ -133,6 +137,7 @@ class MyRobot(magicbot.MagicRobot):
         self.aimbot.setup()
         self.climb_control()
         self.shooter.speed_config()
+        print(self.encoder.returnRps())
         if self.gamepad.getRawButton(5):
             self.aimbot.execute()
             
