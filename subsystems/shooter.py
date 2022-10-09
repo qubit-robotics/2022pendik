@@ -1,7 +1,9 @@
-from math import fabs
+from math import pi
 import wpilib
+from custom_sensor_classes.customAbsoluteEncoder import lm393Encoder
 import ctre
 import magicbot
+import constants
 from wpilib import SmartDashboard as sd
 from wpimath.controller import PIDController, SimpleMotorFeedforwardMeters
 
@@ -16,13 +18,12 @@ class Shooter:
     shooter_front2: ctre.WPI_VictorSPX
     shooter_rear: ctre.WPI_VictorSPX
 
-    shooter_timer: wpilib.Timer
-
     shooter_front1: ctre.WPI_VictorSPX
     shooter_front2: ctre.WPI_VictorSPX
     shooter_rear: ctre.WPI_VictorSPX
 
-    shooter_encoder: wpilib.Encoder
+    shooter_encoder_front: wpilib.Encoder
+    shooter_encoder_rear: lm393Encoder
 
     ballInPlace = False
 
@@ -38,28 +39,46 @@ class Shooter:
     shooter_speedChange_value = 0
     shooter_speedChanged = False
 
-    front_setpoint = 30
-    rear_setpoint = 1
+    front_setpoint = 50
+    rear_setpoint = 70
+
+    front_setpoint_mps = 12
+    rear_setpoint_mps = 6
 
     force = False
 
+    def mpsToRotPerSec(self, mps: float, wheel_diameter: float) -> float:
+        """
+        @param1: The target angular velocity in m/s.
+        @param2: The diameter of the wheel in centimeters.
+        returns: Target rps for the wheel. 
+        """
+        return mps / wheel_diameter / pi * 100
 
     def setup(self):
-        self.shooter_controller = PIDController(
+        self.shooter_controller_front = PIDController(
+            0.7,
+            0,
+            0
+        )
+
+        self.shooter_controller_rear = PIDController(
             0.7,
             0,
             0
         )
         
-        self.shooter_controller.setTolerance(5)
+        self.shooter_controller_front.setTolerance(self.mpsToRotPerSec(1, constants.kDiameterFrontShooterWheel))
+        self.shooter_controller_rear.setTolerance(self.mpsToRotPerSec(1, constants.kDiameterRearShooterWheel))
 
-        self.shooter_ff = SimpleMotorFeedforwardMeters(
+        self.shooter_ff_front = SimpleMotorFeedforwardMeters(
             -1.7686,
             0.17723,
             0.29475
         )
 
-        self.ff_timer = wpilib.Timer()
+        self.windup_timer = wpilib.Timer()
+        self.aftershoot_timer = wpilib.Timer()
 
 
     def shooter_begin(self):
@@ -83,29 +102,31 @@ class Shooter:
                     self.belt_lower.set(0)
                     self.shooter_ramp_up()
 
-                    if self.shooter_controller.atSetpoint():
-                        self.ff_timer.start()
-                        if self.ff_timer.get() > 1:
+                    if self.shooter_controller_front.atSetpoint() and self.shooter_controller_rear.atSetpoint():
+                        self.windup_timer.start()
+                        if self.windup_timer.get() > 1:
                             self.force = True
-                            self.ff_timer.stop()
-                            self.ff_timer.reset()
-                            self.shooter_controller.reset()
-                            self.shooter_encoder.reset()
+                            self.windup_timer.stop()
+                            self.windup_timer.reset()
+                            self.shooter_controller_front.reset()
+                            self.shooter_encoder_front.reset()
+                            self.shooter_controller_rear.reset()
+                            self.shooter_controller_rear.reset()
                     else:
                         self.force = False
 
                     if (not self.switch_upper.get()):
-                        sd.putString("shooterState","Atis Bitti.")
-                        self.shooter_timer.start()
-                        if self.shooter_timer.get() > 1:
-                            self.shooter_timer.stop()
-                            self.shooter_timer.reset()
+                        self.aftershoot_timer.start()
+                        if self.aftershoot_timer.get() > 1:
+                            self.aftershoot_timer.stop()
+                            self.aftershoot_timer.reset()
                             self.belt_upper.set(0)
                             self.belt_lower.set(0)
                             sd.putNumber("ballCount", sd.getNumber("ballCount", 1) - 1)
+                            sd.putString("shooterState","Atis Bitti.")
                             sd.putBoolean("shooterRunning", False)
                             self.shooter_stop()
-                            self.shooter_encoder.reset()
+                            self.shooter_encoder_front.reset()
                             self.ballInPlace = False
                             self.force = False
 
@@ -126,41 +147,74 @@ class Shooter:
             self.shooter_speedChanged = True
 
         if self.shooter_speedChange_value == 0:
-            self.front_setpoint = 50
-            self.rear_setpoint = 12            
+            self.front_setpoint_mps = 12
+            self.rear_setpoint_mps = 5
+            self.front_setpoint = self.mpsToRotPerSec(
+                self.front_setpoint_mps, constants.kDiameterFrontShooterWheel
+            )
+            self.rear_setpoint = self.mpsToRotPerSec(
+                self.rear_setpoint_mps, constants.kDiameterRearShooterWheel
+            )
 
         elif self.shooter_speedChange_value == 1:
-            self.front_setpoint = 60
-            self.rear_setpoint = 6
+            self.front_setpoint_mps = 12
+            self.rear_setpoint_mps = 12
+            self.front_setpoint = self.mpsToRotPerSec(
+                self.front_setpoint_mps, constants.kDiameterFrontShooterWheel
+            )
+            self.rear_setpoint = self.mpsToRotPerSec(
+                self.rear_setpoint_mps, constants.kDiameterRearShooterWheel
+            )
 
         elif self.shooter_speedChange_value == 2:
-            self.front_setpoint = 30
-            self.rear_setpoint = 12
-        
+            self.front_setpoint_mps = 6
+            self.rear_setpoint_mps = 6 
+            self.front_setpoint = self.mpsToRotPerSec(
+                self.front_setpoint_mps, constants.kDiameterFrontShooterWheel
+            )
+            self.rear_setpoint = self.mpsToRotPerSec(
+                self.rear_setpoint_mps, constants.kDiameterRearShooterWheel
+            )
+
         elif self.shooter_speedChange_value == 3:
-            self.front_setpoint = 60
-            self.rear_setpoint = 12
+            self.front_setpoint_mps = 12
+            self.rear_setpoint_mps = 6
+            self.front_setpoint = self.mpsToRotPerSec(
+                self.front_setpoint_mps, constants.kDiameterFrontShooterWheel
+            )
+            self.rear_setpoint = self.mpsToRotPerSec(
+                self.rear_setpoint_mps, constants.kDiameterRearShooterWheel
+            )
 
         if self.shooter_speedChanged:
-            self.shooter_speedChanged = False      
+            self.shooter_speedChanged = False    
+
+            for i in self.shooterMode:
+                _state = (i == self.shooter_speedChange_value)
+                sd.putBoolean(self.shooterMode.get(i), _state)  
 
     def shooter_ramp_up(self):
-        shooter_ff_val = self.shooter_ff.calculate(-self.shooter_encoder.getRate(), self.front_setpoint)
-        dummyValue = self.shooter_controller.calculate(abs(self.shooter_encoder.getRate()), self.front_setpoint)
+        shooter_ff_val_front = self.shooter_ff_front.calculate(-self.shooter_encoder_front.getRate(), self.front_setpoint)
+        dummyValue_front = self.shooter_controller_front.calculate(abs(self.shooter_encoder_front.getRate()), self.front_setpoint)
 
-        shooter_voltage = shooter_ff_val
+        shooter_pid_val_rear = self.shooter_controller_rear.calculate(self.shooter_encoder_rear.returnRps(), self.rear_setpoint)
 
-        self.shooter_front1.setVoltage(shooter_voltage)
-        self.shooter_front2.setVoltage(shooter_voltage)
-        self.shooter_rear.setVoltage(self.rear_setpoint)
+        shooter_voltage_front = shooter_ff_val_front
+        shooter_voltage_rear = shooter_pid_val_rear
+
+        self.shooter_front1.setVoltage(shooter_voltage_front)
+        self.shooter_front2.setVoltage(shooter_voltage_front)
+        self.shooter_rear.setVoltage(shooter_voltage_rear)
 
     def shooter_stop(self):
         self.shooter_front1.set(0)
         self.shooter_front2.set(0)
         self.shooter_rear.set(0)
     
-
     def execute(self):
-        sd.putNumber("shooter_encoder",self.shooter_encoder.getRate())
-        sd.putNumber("front_setpoint", self.front_setpoint)
-        sd.putNumber("rear_setpoint", self.rear_setpoint)
+        sd.putNumber("shooter_encoder_front_rps", self.shooter_encoder_front.getRate())
+        sd.putNumber("shooter_encoder_rear_rps", self.shooter_encoder_rear.returnRps())
+        sd.putNumber("front_setpoint in rot", self.front_setpoint)
+        sd.putNumber("rear_setpoint in rot", self.rear_setpoint)
+        sd.putNumber("front_setpoint in mps", self.front_setpoint_mps)
+        sd.putNumber("rear_setpoint in mps", self.rear_setpoint_mps)

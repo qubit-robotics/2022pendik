@@ -20,3 +20,8 @@ kCamResolutionWidth = 640
 kCamResolutionHeight = 480
 kMinTargetArea = 10
 kTargetHeight = 1.76
+
+#Shooter sabitleri
+kDiameterFrontShooterWheel = 7.62
+kDiameterRearShooterWheel = 5.08
+kPulleyRatioRearShooter = 1 / 1.2

@@ -10,6 +10,7 @@ from subsystems.climb import Climb
 from components.path import RamseteComponent
 from components.aimbot import AimBot
 from custom_sensor_classes.customAbsoluteEncoder import lm393Encoder
+import constants
 import photonvision
 import ctre
 from wpilib import SmartDashboard as sd
@@ -56,7 +57,7 @@ class MyRobot(magicbot.MagicRobot):
     def createObjects(self):
         '''Create motors and stuff here'''
         self.cam = photonvision.PhotonCamera("camera1")
-        self.intakespeed = 0.8
+
         self.drive_fLeft = wpilib.PWMVictorSPX(2)
         self.drive_rLeft = wpilib.PWMVictorSPX(0)
         self.drive_fRight = wpilib.PWMVictorSPX(1)
@@ -72,8 +73,10 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 360)
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 360)
 
-        self.shooter_encoder = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
-        self.shooter_encoder.setDistancePerPulse(0.307692308 / 1024) # shooter tekeri eğer düzlemde olsaydı ne kadar yol kat ederdi (bu bize parabol hesaplamasında yardım edecek)
+        self.shooter_encoder_front = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
+        self.shooter_encoder_front.setDistancePerPulse(0.307692308 / 1024)
+        self.shooter_encoder_rear = lm393Encoder(3, 2)
+        self.shooter_encoder_rear.setGearRatio(constants.kPulleyRatioRearShooter)
 
         self.gyro = wpilib.ADIS16448_IMU()
         self.gyro.calibrate()
@@ -104,20 +107,14 @@ class MyRobot(magicbot.MagicRobot):
         sd.putNumber("ballCount", 0)
         sd.putBoolean("intakeRunning", False)
         sd.putBoolean("shooterRunning", False)
-        sd.putNumber("climbMotor1",0)
-        sd.putNumber("climbMotor2",0)
-        sd.putBoolean("atis_Kontrol",False)
         
-        self.encoder = lm393Encoder(3, 2)
-
     def robotPeriodic(self):
         self.camera.get_distance()
         self.camera.get_yaw()
         self.shooter.execute()
-        self.encoder.periodic()
+        self.shooter_encoder_rear.periodic()
 
     def teleopPeriodic(self):
-        print(self.switch_upper.get())
         '''Called on each iteration of the control loop'''
         # DRIVETRAIN
         # Gamepad'in kanallari ters, biz normal matematikteki koordinat duzlemini kullanacagiz 
@@ -137,7 +134,6 @@ class MyRobot(magicbot.MagicRobot):
         self.aimbot.setup()
         self.climb_control()
         self.shooter.speed_config()
-        print(self.encoder.returnRps())
         if self.gamepad.getRawButton(5):
             self.aimbot.execute()
             

@@ -1,52 +1,58 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="shooter_encoder" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="365"/>
+	<widget field="Upper Hub Tarmac Cizgi" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="180" y="32"/>
+		<height>27</height>
 	</widget>
-	<widget field="PIDController[1]" type="PIDController" class="edu.wpi.first.smartdashboard.gui.elements.PIDEditor">
-		<location x="650" y="26"/>
+	<widget field="front_setpoint in mps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="406" y="354"/>
+	</widget>
+	<widget field="shooter_encoder_rear_rps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="13" y="469"/>
+		<width>347</width>
+	</widget>
+	<widget field="shooter_encoder_front_rps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="16" y="439"/>
+	</widget>
+	<widget field="rear_setpoint in rot" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="16" y="400"/>
+		<width>345</width>
+	</widget>
+	<widget field="rear_setpoint in mps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="408" y="385"/>
+		<width>297</width>
+		<height>25</height>
+	</widget>
+	<widget field="front_setpoint in rot" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="17" y="371"/>
+		<width>343</width>
 	</widget>
 	<widget field="hubYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="295" y="261"/>
-		<width>144</width>
-	</widget>
-	<widget field="shooter_valueFront" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="482" y="363"/>
-	</widget>
-	<widget field="shooter_valueRear" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="300" y="364"/>
+		<width>169</width>
 	</widget>
 	<widget field="GORUS" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="293" y="219"/>
-		<width>144</width>
+		<width>173</width>
 		<height>15</height>
 	</widget>
 	<widget field="hubDistance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="294" y="240"/>
-	</widget>
-	<widget field="Lower Hub Dipdibe" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="150" y="29"/>
-		<width>116</width>
-		<height>29</height>
+		<width>169</width>
 	</widget>
 	<widget field="Lower Hub" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="277" y="30"/>
-		<width>76</width>
+		<location x="367" y="30"/>
+		<width>87</width>
 		<height>29</height>
 	</widget>
 	<widget field="Upper Hub" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="362" y="31"/>
-		<width>76</width>
+		<location x="472" y="32"/>
+		<width>85</width>
 		<height>27</height>
 	</widget>
 	<widget field="Upper Hub 2 Metre" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="452" y="32"/>
-		<width>117</width>
-		<height>26</height>
-	</widget>
-	<widget field="atis_kontrol" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="452" y="33"/>
-		<width>117</width>
+		<location x="575" y="32"/>
+		<width>142</width>
 		<height>26</height>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
@@ -54,7 +60,7 @@
 		<property name="Text" value="BAGLANTI"/>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
-		<location x="453" y="242"/>
+		<location x="559" y="235"/>
 		<width>156</width>
 		<height>78</height>
 	</static-widget>
@@ -85,34 +91,122 @@
 		<location x="390" y="120"/>
 		<width>239</width>
 		<height>21</height>
-		<property name="Foreground" value="255.255.255.255"/>
 		<property name="Background" value="255.0.51.255"/>
 	</widget>
 	<widget field="shooterState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="384" y="143"/>
 		<width>246</width>
 		<height>22</height>
-		<property name="Foreground" value="255.255.255.255"/>
 		<property name="Background" value="255.0.0.255"/>
 	</widget>
 	<widget field="Autonomous Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="3" y="2"/>
+		<location x="9" y="8"/>
 	</widget>
 	<widget field="intakeRunning" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="71" y="121"/>
 		<width>138</width>
 		<height>53</height>
 	</widget>
-	<widget field="atis_Kontrol" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="88"/>
-	</widget>
-	<widget field="climbMotor2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="66"/>
-	</widget>
-	<widget field="climbMotor1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="44"/>
-	</widget>
 </dashboard>
 <live-window>
+	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<widget field="DigitalInput[0]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="20"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[6]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="44"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[8]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="68"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="Encoder[5]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="5" y="92"/>
+			<height>123</height>
+			<width>361</width>
+		</widget>
+		<widget field="PWMVictorSPX[2]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="215"/>
+			<height>62</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[5]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="277"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[7]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="301"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="PWMVictorSPX[3]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="325"/>
+			<height>62</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[4]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="387"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="Encoder[8]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="5" y="411"/>
+			<height>123</height>
+			<width>361</width>
+		</widget>
+		<widget field="PWMVictorSPX[0]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="534"/>
+			<height>62</height>
+			<width>361</width>
+		</widget>
+		<widget field="Encoder[0]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="5" y="596"/>
+			<height>123</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[3]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="719"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="PWMVictorSPX[1]" type="Motor Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="5" y="743"/>
+			<height>62</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[1]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="805"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="5" y="829"/>
+			<height>24</height>
+			<width>361</width>
+		</widget>
+		<location x="14" y="9"/>
+		<width>371</width>
+		<height>858</height>
+	</widget>
 </live-window>
+	<hidden field="auto_forwardControllerSetpoint"/>
+	<hidden field="auto_turnControllerSetpoint"/>
+	<hidden field="shooter_valueRear"/>
+	<hidden field="atis_kontrol"/>
+	<hidden field="auto_botInPlace"/>
+	<hidden field="climbMotor1"/>
+	<hidden field="shooter_valueFront"/>
+	<hidden field="climbMotor2"/>
+	<hidden field="Lower Hub Dipdibe"/>
+	<hidden field="Field"/>
+	<hidden field="Model"/>
+	<hidden field="PIDController[1]"/>
+	<hidden field="atis_Kontrol"/>
+	<hidden field="shooter_encoder"/>
 </xml>

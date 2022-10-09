@@ -6,15 +6,20 @@
       "style": "0",
       "userScale": "2",
       "width": "1280",
-      "xpos": "554",
-      "ypos": "185"
+      "xpos": "640",
+      "ypos": "181"
     }
   },
   "Window": {
+    "###/SmartDashboard/Autonomous Mode": {
+      "Collapsed": "0",
+      "Pos": "28,594",
+      "Size": "254,54"
+    },
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
-      "Pos": "507,127",
-      "Size": "423,276"
+      "Pos": "85,127",
+      "Size": "845,297"
     },
     "###/SmartDashboard/Model": {
       "Collapsed": "0",
@@ -23,7 +28,7 @@
     },
     "###DIO": {
       "Collapsed": "0",
-      "Pos": "319,137",
+      "Pos": "314,136",
       "Size": "162,238"
     },
     "###Encoders": {
@@ -38,7 +43,7 @@
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "312,445",
+      "Pos": "311,445",
       "Size": "796,155"
     },
     "###Keyboard 0 Settings": {
@@ -48,12 +53,12 @@
     },
     "###Keyboard 1 Settings": {
       "Collapsed": "0",
-      "Pos": "320,50",
+      "Pos": "320,36",
       "Size": "300,560"
     },
     "###NetworkTables": {
       "Collapsed": "0",
-      "Pos": "20,574",
+      "Pos": "253,555",
       "Size": "750,185"
     },
     "###Other Devices": {

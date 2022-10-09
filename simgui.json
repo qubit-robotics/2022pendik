@@ -61,6 +61,11 @@
       "/SmartDashboard/PIDController[1]": "PIDController"
     },
     "windows": {
+      "/SmartDashboard/Autonomous Mode": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "window": {
           "visible": true
@@ -73,6 +78,9 @@
       "open": true
     },
     "components": {
+      "open": true
+    },
+    "robot": {
       "open": true
     }
   }

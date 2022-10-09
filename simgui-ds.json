@@ -53,12 +53,17 @@
         }
       ],
       "axisCount": 2,
-      "buttonCount": 4,
+      "buttonCount": 8,
       "buttonKeys": [
         77,
         44,
         46,
-        47
+        47,
+        -1,
+        -1,
+        -1,
+        81,
+        -1
       ],
       "povCount": 0
     },

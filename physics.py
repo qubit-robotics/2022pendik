@@ -64,7 +64,7 @@ class PhysicsEngine:
         self.left_encoder_counter_front = 0.0
         self.right_encoder_counter_front = 0.0
 
-        self.shooter_encoder = wpilib.simulation.EncoderSim(robot.shooter_encoder)
+        self.shooter_encoder = wpilib.simulation.EncoderSim(robot.shooter_encoder_front)
         #eylemsizlik momenti sallamasyon
         self.flywheelSim = wpilib.simulation.FlywheelSim(
             DCMotor.RS775_125(2),

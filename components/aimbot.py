@@ -48,4 +48,5 @@ class AimBot:
                 sd.putBoolean("auto_botInPlace", False)
 
         else:
+            print("hedef yok")
             self.drivetrain.move(0,0,0.5)
