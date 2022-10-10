@@ -5,6 +5,11 @@
         "visible": true
       }
     },
+    "Encoders": {
+      "window": {
+        "visible": true
+      }
+    },
     "Other Devices": {
       "ADIS16448[4]": {
         "header": {
@@ -29,6 +34,9 @@
     },
     "RoboRIO": {
       "5V Rail": {
+        "open": true
+      },
+      "RoboRIO Input": {
         "open": true
       },
       "window": {

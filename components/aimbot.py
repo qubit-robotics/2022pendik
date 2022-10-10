@@ -6,7 +6,7 @@ from subsystems.drivetrain import DriveTrain
 
 class AimBot:
 
-    LINEAR_P = 1
+    LINEAR_P = 8
     LINEAR_D = 0.2
     ANGULAR_P = 0.01
     ANGULAR_D = 0
@@ -24,8 +24,6 @@ class AimBot:
 
         self.desiredDistance = desiredDistance
 
-    def execute(self):
-
         if self.cam.hasTargets():
             rotationSpeed = self.turnController.calculate(sd.getNumber("hubYaw", 0), 0)
             forwardSpeed = self.forwardController.calculate(sd.getNumber("hubDistance", 0), self.desiredDistance)
@@ -38,8 +36,8 @@ class AimBot:
             if not self.turnController.atSetpoint():
                 self.drivetrain.move(0, 0, rotationSpeed)
 
-            elif not self.turnController.atSetpoint():
-                self.drivetrain.move(forwardSpeed, 0.0, 0)
+            elif not self.forwardController.atSetpoint():
+                self.drivetrain.move(0, forwardSpeed, 0)
             
             if self.turnController.atSetpoint() and self.forwardController.atSetpoint():
                 sd.putBoolean("auto_botInPlace", True)
@@ -48,5 +46,7 @@ class AimBot:
                 sd.putBoolean("auto_botInPlace", False)
 
         else:
-            print("hedef yok")
             self.drivetrain.move(0,0,0.5)
+
+    def execute(self):
+        pass

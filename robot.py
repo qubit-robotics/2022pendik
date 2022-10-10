@@ -49,7 +49,7 @@ class MyRobot(magicbot.MagicRobot):
     def climb_control(self):
         if self.flightStick.getRawButton(6):
             self.climb.move_string(1)
-        elif self.flightStick.getRawButton(7):
+        elif self.flightStick.getRawButton(5):
             self.climb.move_string(-1)
         else:
             self.climb.execute()
@@ -75,8 +75,9 @@ class MyRobot(magicbot.MagicRobot):
 
         self.shooter_encoder_front = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
         self.shooter_encoder_front.setDistancePerPulse(0.307692308 / 1024)
-        self.shooter_encoder_rear = lm393Encoder(3, 2)
-        self.shooter_encoder_rear.setGearRatio(constants.kPulleyRatioRearShooter)
+        self.shooter_encoder_rear = lm393Encoder(wpilib.Counter.Mode.kSemiperiod)
+        self.shooter_encoder_rear.setUpSource(channel=3)
+        self.shooter_encoder_rear.setSemiPeriodMode(True)
 
         self.gyro = wpilib.ADIS16448_IMU()
         self.gyro.calibrate()
@@ -112,7 +113,6 @@ class MyRobot(magicbot.MagicRobot):
         self.camera.get_distance()
         self.camera.get_yaw()
         self.shooter.execute()
-        self.shooter_encoder_rear.periodic()
 
     def teleopPeriodic(self):
         '''Called on each iteration of the control loop'''
@@ -134,8 +134,6 @@ class MyRobot(magicbot.MagicRobot):
         self.aimbot.setup()
         self.climb_control()
         self.shooter.speed_config()
-        if self.gamepad.getRawButton(5):
-            self.aimbot.execute()
             
 
 if __name__ == '__main__':

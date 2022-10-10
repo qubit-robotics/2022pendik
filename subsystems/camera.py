@@ -28,7 +28,6 @@ class Camera:
     def get_yaw(self):
         if self.cam.hasTargets():
             sd.putNumber("hubYaw", -self.cam.getLatestResult().getBestTarget().getYaw())
-            print("yaw", -self.cam.getLatestResult().getBestTarget().getYaw())
         else:
             sd.delete(
                 "hubYaw"

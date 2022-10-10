@@ -197,7 +197,7 @@ class Shooter:
         shooter_ff_val_front = self.shooter_ff_front.calculate(-self.shooter_encoder_front.getRate(), self.front_setpoint)
         dummyValue_front = self.shooter_controller_front.calculate(abs(self.shooter_encoder_front.getRate()), self.front_setpoint)
 
-        shooter_pid_val_rear = self.shooter_controller_rear.calculate(self.shooter_encoder_rear.returnRps(), self.rear_setpoint)
+        shooter_pid_val_rear = self.shooter_controller_rear.calculate(self.shooter_encoder_rear.getRate(), self.rear_setpoint)
 
         shooter_voltage_front = shooter_ff_val_front
         shooter_voltage_rear = shooter_pid_val_rear
@@ -213,7 +213,7 @@ class Shooter:
     
     def execute(self):
         sd.putNumber("shooter_encoder_front_rps", self.shooter_encoder_front.getRate())
-        sd.putNumber("shooter_encoder_rear_rps", self.shooter_encoder_rear.returnRps())
+        sd.putNumber("shooter_encoder_rear_rps", self.shooter_encoder_rear.getRate())
         sd.putNumber("front_setpoint in rot", self.front_setpoint)
         sd.putNumber("rear_setpoint in rot", self.rear_setpoint)
         sd.putNumber("front_setpoint in mps", self.front_setpoint_mps)

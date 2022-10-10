@@ -18,8 +18,8 @@
     },
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
-      "Pos": "85,127",
-      "Size": "845,297"
+      "Pos": "281,297",
+      "Size": "845,295"
     },
     "###/SmartDashboard/Model": {
       "Collapsed": "0",
@@ -28,12 +28,12 @@
     },
     "###DIO": {
       "Collapsed": "0",
-      "Pos": "314,136",
+      "Pos": "429,33",
       "Size": "162,238"
     },
     "###Encoders": {
       "Collapsed": "0",
-      "Pos": "187,297",
+      "Pos": "153,163",
       "Size": "113,100"
     },
     "###FMS": {
@@ -74,7 +74,7 @@
     "###RoboRIO": {
       "Collapsed": "0",
       "Pos": "227,317",
-      "Size": "193,238"
+      "Size": "193,284"
     },
     "###System Joysticks": {
       "Collapsed": "0",
