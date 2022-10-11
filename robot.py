@@ -73,10 +73,11 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontLeftEncoder.setDistancePerPulse((15 * math.pi) / 360)
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 360)
 
-        self.shooter_encoder_front = wpilib.Encoder(8, 7, encodingType=wpilib.Encoder.EncodingType.k4X, reverseDirection=True)
-        self.shooter_encoder_front.setDistancePerPulse(0.307692308 / 1024)
+        self.shooter_encoder_front = lm393Encoder(wpilib.Counter.Mode.kSemiperiod)
+        self.shooter_encoder_front.setUpSource(channel=7)
+        self.shooter_encoder_front.setSemiPeriodMode(True)
         self.shooter_encoder_rear = lm393Encoder(wpilib.Counter.Mode.kSemiperiod)
-        self.shooter_encoder_rear.setUpSource(channel=3)
+        self.shooter_encoder_rear.setUpSource(channel=8)
         self.shooter_encoder_rear.setSemiPeriodMode(True)
 
         self.gyro = wpilib.ADIS16448_IMU()

@@ -63,8 +63,6 @@ class PhysicsEngine:
 
         self.left_encoder_counter_front = 0.0
         self.right_encoder_counter_front = 0.0
-
-        self.shooter_encoder = wpilib.simulation.EncoderSim(robot.shooter_encoder_front)
         #eylemsizlik momenti sallamasyon
         self.flywheelSim = wpilib.simulation.FlywheelSim(
             DCMotor.RS775_125(2),
@@ -175,8 +173,5 @@ class PhysicsEngine:
         self.flywheelSim.update(tm_diff)
         self.flywheelSim.setInputVoltage(
             self.shooter_motor_collection.getMotorOutputLeadVoltage()
-        )
-        self.shooter_encoder.setRate(
-            self.flywheelSim.getAngularVelocity() / 0.10472 / 60
         )
 

@@ -22,7 +22,7 @@ class Shooter:
     shooter_front2: ctre.WPI_VictorSPX
     shooter_rear: ctre.WPI_VictorSPX
 
-    shooter_encoder_front: wpilib.Encoder
+    shooter_encoder_front: lm393Encoder
     shooter_encoder_rear: lm393Encoder
 
     ballInPlace = False
@@ -70,12 +70,6 @@ class Shooter:
         
         self.shooter_controller_front.setTolerance(self.mpsToRotPerSec(1, constants.kDiameterFrontShooterWheel))
         self.shooter_controller_rear.setTolerance(self.mpsToRotPerSec(1, constants.kDiameterRearShooterWheel))
-
-        self.shooter_ff_front = SimpleMotorFeedforwardMeters(
-            -1.7686,
-            0.17723,
-            0.29475
-        )
 
         self.windup_timer = wpilib.Timer()
         self.aftershoot_timer = wpilib.Timer()
@@ -194,12 +188,10 @@ class Shooter:
                 sd.putBoolean(self.shooterMode.get(i), _state)  
 
     def shooter_ramp_up(self):
-        shooter_ff_val_front = self.shooter_ff_front.calculate(-self.shooter_encoder_front.getRate(), self.front_setpoint)
-        dummyValue_front = self.shooter_controller_front.calculate(abs(self.shooter_encoder_front.getRate()), self.front_setpoint)
-
+        shooter_pid_val_front = self.shooter_controller_front.calculate(abs(self.shooter_encoder_front.getRate()), self.front_setpoint)
         shooter_pid_val_rear = self.shooter_controller_rear.calculate(self.shooter_encoder_rear.getRate(), self.rear_setpoint)
 
-        shooter_voltage_front = shooter_ff_val_front
+        shooter_voltage_front = shooter_pid_val_front
         shooter_voltage_rear = shooter_pid_val_rear
 
         self.shooter_front1.setVoltage(shooter_voltage_front)

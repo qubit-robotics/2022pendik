@@ -20,15 +20,20 @@ class Deneme(magicbot.AutonomousStateMachine):
 
     _numOfBalls = None
 
+    i = 0
+
     @magicbot.timed_state(first=True, duration=3, next_state="aim")
     def takeBallsIn(self):
-        if not self._ballsChecked:
+        if (not self._ballsChecked) and self.i != 2:
             sd.putString("IntakeState","Inactive")
             sd.putBoolean("intakeRunning", True)
             sd.putBoolean("shooterRunning", False)
+            self.i +=1
             self._ballsChecked = True
         self.intake.intake_begin()
-        self._numOfBalls = sd.getNumber("ballCount", 0)
+        if self._numOfBalls != sd.getNumber("ballCount", 0):
+            self._numOfBalls = sd.getNumber("ballCount", 0)
+            self._ballsChecked = False
         self.drivetrain.move(0,-0.5,0)
 
     @magicbot.state()
