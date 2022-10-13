@@ -96,7 +96,7 @@ class Shooter:
                     self.belt_lower.set(0)
                     self.shooter_ramp_up()
 
-                    if self.shooter_controller_front.atSetpoint() and self.shooter_controller_rear.atSetpoint():
+                    if True:
                         self.windup_timer.start()
                         if self.windup_timer.get() > 1:
                             self.force = True
@@ -107,6 +107,7 @@ class Shooter:
                             self.shooter_controller_rear.reset()
                             self.shooter_controller_rear.reset()
                     else:
+                        pass
                         self.force = False
 
                     if (not self.switch_upper.get()):
@@ -194,9 +195,9 @@ class Shooter:
         shooter_voltage_front = shooter_pid_val_front
         shooter_voltage_rear = shooter_pid_val_rear
 
-        self.shooter_front1.setVoltage(shooter_voltage_front)
-        self.shooter_front2.setVoltage(shooter_voltage_front)
-        self.shooter_rear.setVoltage(shooter_voltage_rear)
+        self.shooter_front1.setVoltage(9)
+        self.shooter_front2.setVoltage(9)
+        self.shooter_rear.setVoltage(6)
 
     def shooter_stop(self):
         self.shooter_front1.set(0)

@@ -46,7 +46,7 @@ class AimBot:
                 sd.putBoolean("auto_botInPlace", False)
 
         else:
-            self.drivetrain.move(0,0,0.5)
+            self.drivetrain.move(0,0,0.2)
 
     def execute(self):
         pass

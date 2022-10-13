@@ -100,6 +100,7 @@ class MyRobot(magicbot.MagicRobot):
         self.shooter_front2 = ctre.WPI_VictorSPX(8)
         self.shooter_rear = ctre.WPI_VictorSPX(9)
         self.shooter_front1.setInverted(1)
+        self.shooter_front2.setInverted(1)
         self.shooter_rear.setInverted(1)
 
         self.intake_timer = wpilib.Timer()
@@ -135,7 +136,7 @@ class MyRobot(magicbot.MagicRobot):
         self.aimbot.setup()
         self.climb_control()
         self.shooter.speed_config()
-            
 
+        
 if __name__ == '__main__':
     wpilib.run(MyRobot)
