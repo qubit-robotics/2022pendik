@@ -8,7 +8,7 @@ class AimBot:
 
     LINEAR_P = 8
     LINEAR_D = 0.2
-    ANGULAR_P = 0.01
+    ANGULAR_P = 0.005
     ANGULAR_D = 0
 
     cam: photonvision.PhotonCamera
@@ -16,7 +16,7 @@ class AimBot:
 
     def setup(self):
 
-        self.desiredDistance = 3
+        self.desiredDistance = 4
         self.turnController = PIDController(self.ANGULAR_P, 0, self.ANGULAR_D)
         self.forwardController = PIDController(self.LINEAR_P, 0, self.LINEAR_D)
     

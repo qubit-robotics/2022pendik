@@ -74,10 +74,10 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_FrontRightEncoder.setDistancePerPulse((15 * math.pi) / 360)
 
         self.shooter_encoder_front = lm393Encoder(wpilib.Counter.Mode.kSemiperiod)
-        self.shooter_encoder_front.setUpSource(channel=7)
+        self.shooter_encoder_front.setUpSource(channel=8)
         self.shooter_encoder_front.setSemiPeriodMode(True)
         self.shooter_encoder_rear = lm393Encoder(wpilib.Counter.Mode.kSemiperiod)
-        self.shooter_encoder_rear.setUpSource(channel=8)
+        self.shooter_encoder_rear.setUpSource(channel=7)
         self.shooter_encoder_rear.setSemiPeriodMode(True)
 
         self.gyro = wpilib.ADIS16448_IMU()
@@ -90,8 +90,8 @@ class MyRobot(magicbot.MagicRobot):
         self.belt_upper = ctre.WPI_VictorSPX(6)
         self.belt_lower.setInverted(1)
 
-        self.climb_low = ctre.WPI_VictorSPX(5)
-        self.climb_up = ctre.WPI_VictorSPX(4)
+        self.climb_low = ctre.WPI_VictorSPX(4)
+        self.climb_up = ctre.WPI_VictorSPX(5)
 
         self.switch_upper = wpilib.DigitalInput(9)
         self.switch_lower = wpilib.DigitalInput(4)

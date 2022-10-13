@@ -63,7 +63,7 @@ class Shooter:
         )
 
         self.shooter_controller_rear = PIDController(
-            0.7,
+            2,
             0,
             0
         )
@@ -96,7 +96,7 @@ class Shooter:
                     self.belt_lower.set(0)
                     self.shooter_ramp_up()
 
-                    if True:
+                    if self.switch_upper.get():
                         self.windup_timer.start()
                         if self.windup_timer.get() > 1:
                             self.force = True
@@ -121,6 +121,8 @@ class Shooter:
                             sd.putString("shooterState","Atis Bitti.")
                             sd.putBoolean("shooterRunning", False)
                             self.shooter_stop()
+                            self.windup_timer.stop()
+                            self.windup_timer.reset()
                             self.shooter_encoder_front.reset()
                             self.ballInPlace = False
                             self.force = False
@@ -197,7 +199,7 @@ class Shooter:
 
         self.shooter_front1.setVoltage(9)
         self.shooter_front2.setVoltage(9)
-        self.shooter_rear.setVoltage(6)
+        self.shooter_rear.setVoltage(shooter_voltage_rear)
 
     def shooter_stop(self):
         self.shooter_front1.set(0)

@@ -22,7 +22,7 @@ class Deneme(magicbot.AutonomousStateMachine):
 
     i = 0
 
-    @magicbot.timed_state(first=True, duration=3, next_state="aim")
+    @magicbot.timed_state(first=True, duration=2, next_state="aim")
     def takeBallsIn(self):
         if (not self._ballsChecked) and self.i != 2:
             sd.putString("IntakeState","Inactive")
@@ -40,7 +40,7 @@ class Deneme(magicbot.AutonomousStateMachine):
     def aim(self):
         state = sd.getBoolean("auto_botInPlace", False)
         if not state:
-            self.aimbot.aim(3)
+            self.aimbot.aim(41)
         else:
             self.next_state("shoot")
 
